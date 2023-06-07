@@ -32,5 +32,50 @@ inventory.get("/", async (req, res) => {
 });
 
 inventory.post('/', async(req, res)=>{
-    
+    const userid = req.headers.userid;
+    const body = req.body;
+    try {
+        const item = new InventoryModel({dealer:userid, ...body});
+        await item.save();
+        res.status(201).send("Item is created")
+    } catch (error) {
+        res.status(400).send("Not able to create the Item");
+    }
 })
+
+inventory.patch('/:_id', async(req, res)=>{
+    const userid = req.headers.userid;
+    const  {_id} = req.params;
+    const body = req.body;
+    try {
+        const data = await InventoryModel.find({_id, dealer:userid});
+        if(data.length){
+            let data = await InventoryModel.findByIdAndUpdate(body, null, {new:true});
+            res.status(202).send(data);
+
+        }else {
+            res.status(401).send("Your are not allowed to change this Item")
+        }
+    } catch (error) {
+        res.status(400).send("Error in updating the data");
+    }
+})
+
+inventory.delete('/:_id', async(req, res)=>{
+    const userid = req.headers.userid;
+    const  {_id} = req.params;
+    try {
+        const data = await InventoryModel.find({_id, dealer:userid});
+        if(data.length){
+            let data = await InventoryModel.findByIdAndDelete({_id});
+            res.status(202).send(data);
+
+        }else {
+            res.status(401).send("Your are not allowed to delete this Item")
+        }
+    } catch (error) {
+        res.status(400).send("Error in Deleting the data");
+    }
+})
+
+module.exports = {inventory}
