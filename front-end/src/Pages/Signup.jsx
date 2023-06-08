@@ -34,7 +34,6 @@ const Signup = () => {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log("first");
     setloading(true);
     try {
       await axios_create.post("/auth/sign-up", { ...data });
@@ -61,7 +60,6 @@ const Signup = () => {
       setloading(false);
     }
   }
-  console.log(data);
 
   return (
     <Box w="35%" m="5rem auto" bg="#282c34">
@@ -70,7 +68,7 @@ const Signup = () => {
         <Flex
           alignItems={"center"}
           justifyContent={"center"}
-          mt="18px"
+          mt="27px"
           fontSize={"1.3rem"}
           visibility={loading ? "unset" : "hidden"}
         >

@@ -32,6 +32,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios_create from "../Utils/axios_instance";
 import { SearchIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const Deals = () => {
   axios_create.defaults.headers.common["Authorization"] =
@@ -41,12 +42,13 @@ const Deals = () => {
   const [filter, setfilter] = useState({});
   const [userid, setuserid] = useState("");
   const toast = useToast();
+  let [searchParams, setSearchParams] = useSearchParams();
 
-  async function fetchData() {
+  async function fetchData(data) {
     setloading(true);
     try {
       let item = await axios_create.get("/inventory", {
-        params: filter,
+        params: data ? data : filter,
       });
       item = item.data;
       setuserid(item.userid);
@@ -69,7 +71,7 @@ const Deals = () => {
   }
   useEffect(() => {
     fetchData();
-  }, [filter]);
+  }, []);
 
   async function delete_item(id) {
     try {
@@ -102,7 +104,9 @@ const Deals = () => {
   return (
     <Flex w="100%" m=" auto">
       <Box
-        minH={"100vh"}
+        position={"sticky"}
+        top="10vh"
+        h={"100vh"}
         w="20%"
         p="20px"
         pt="3rem"
@@ -112,9 +116,12 @@ const Deals = () => {
       >
         <InputGroup>
           <Input
+            value={filter.model || ""}
             color={"black"}
             onChange={(e) => {
               setfilter((prev) => ({ ...prev, model: e.target.value }));
+              setSearchParams(filter);
+              fetchData();
             }}
             name="search"
             type="search"
@@ -141,11 +148,15 @@ const Deals = () => {
               Min Price :
             </Text>
             <Input
+              value={filter.min_price || 0}
               w="100px"
               placeholder="-1"
               outline={"#003a5e"}
               onChange={(e) => {
-                setfilter((prev) => ({ ...prev, min_price: +e.target.value }));
+                setfilter((prev) => {
+                  setSearchParams({ ...prev, min_price: +e.target.value });
+                  return { ...prev, min_price: +e.target.value };
+                });
               }}
             ></Input>
           </Flex>
@@ -159,8 +170,12 @@ const Deals = () => {
               Max Price :
             </Text>
             <Input
+              value={filter.max_price || 0}
               onChange={(e) => {
-                setfilter((prev) => ({ ...prev, max_price: +e.target.value }));
+                setfilter((prev) => {
+                  setSearchParams({ ...prev, max_price: +e.target.value });
+                  return { ...prev, max_price: +e.target.value };
+                });
               }}
               w="100px"
               placeholder="-1"
@@ -184,11 +199,18 @@ const Deals = () => {
               Min Mileage :
             </Text>
             <Input
+              value={filter.min_mileage || 0}
               onChange={(e) => {
-                setfilter((prev) => ({
-                  ...prev,
-                  min_mileage: +e.target.value,
-                }));
+                setfilter((prev) => {
+                  setSearchParams({
+                    ...prev,
+                    min_mileage: +e.target.value,
+                  });
+                  return {
+                    ...prev,
+                    min_mileage: +e.target.value,
+                  };
+                });
               }}
               w="100px"
               placeholder="-1"
@@ -205,11 +227,18 @@ const Deals = () => {
               Max Mileage :
             </Text>
             <Input
+              value={filter.max_mileage || 0}
               onChange={(e) => {
-                setfilter((prev) => ({
-                  ...prev,
-                  max_mileage: +e.target.value,
-                }));
+                setfilter((prev) => {
+                  setSearchParams({
+                    ...prev,
+                    max_mileage: +e.target.value,
+                  });
+                  return {
+                    ...prev,
+                    max_mileage: +e.target.value,
+                  };
+                });
               }}
               w="100px"
               placeholder="-1"
@@ -219,13 +248,17 @@ const Deals = () => {
 
         <Select
           mt="30px"
+          value={filter.color}
           fontWeight={"bold"}
           colorScheme="white"
           color={"#003a5e"}
           w="100%"
           placeholder="Choose Color"
           onChange={(e) => {
-            setfilter((prev) => ({ ...prev, color: e.target.value }));
+            setfilter((prev) => {
+              setSearchParams({ ...prev, color: e.target.value });
+              return { ...prev, color: e.target.value };
+            });
           }}
         >
           <option value="silver">Silver</option>
@@ -236,14 +269,27 @@ const Deals = () => {
           <option value="blue">Blue</option>
           <option value="white">White</option>
         </Select>
-
         <Button
           color="white"
           mt="20px"
           bg="#003a5e"
+          colorScheme="blue"
+          w="100%"
+          onClick={(e) => {
+            fetchData();
+          }}
+        >
+          Apply Filters
+        </Button>
+        <Button
+          color="white"
+          mt="20px"
+          bg="#003a5e"
+          colorScheme="blue"
           w="100%"
           onClick={(e) => {
             setfilter({});
+            fetchData({});
           }}
         >
           Remove Filters
@@ -251,7 +297,7 @@ const Deals = () => {
       </Box>
       <Box m="auto" mt="20px" w="78%" p="20px">
         <Grid templateColumns="repeat(2, 1fr)" gap={6}>
-          {data.length &&
+          {!data.length?null:
             data.map((el) => {
               return (
                 <GridItem
@@ -285,11 +331,7 @@ const Deals = () => {
                         fontWeight={"bolder"}
                       >
                         <Text>Title : </Text>
-                        <Text>
-                          {el.oem_spec.title
-                            ? el.oem_spec.title
-                            : "Not Mentioned"}
-                        </Text>
+                        <Text>{el.title ? el.title : "Not Mentioned"}</Text>
                       </Flex>
                       <Flex
                         fontSize={"19px"}
@@ -406,7 +448,15 @@ const Deals = () => {
                         {userid == el.dealer._id && (
                           <BasicUsage data={el} update_date={update_date} />
                         )}
-                        {userid == el.dealer._id && <Button onClick={()=>{delete_item(el._id)}}>Delete</Button>}
+                        {userid == el.dealer._id && (
+                          <Button
+                            onClick={() => {
+                              delete_item(el._id);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        )}
                       </Flex>
                     </Box>
                   </Flex>
@@ -430,6 +480,8 @@ const Deals = () => {
 //   scratches: "",
 // };
 function BasicUsage({ data, update_date }) {
+  axios_create.defaults.headers.common["Authorization"] =
+    sessionStorage.getItem("token");
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [item, setitem] = useState(data);
   const inputRef = useRef();
@@ -523,7 +575,12 @@ function BasicUsage({ data, update_date }) {
                 </Button>
               </InputGroup>
             </FormControl>
-            <Box>
+            <Box
+              border={item.description.length ? "2px solid #eaeaea" : "none"}
+              p={item.description.length ? "5px" : "0px"}
+              borderRadius={"10px"}
+              mt="10px"
+            >
               {item.description.length &&
                 item.description?.map((el, ind) => {
                   return (
@@ -597,12 +654,6 @@ function BasicUsage({ data, update_date }) {
             </Flex>
             <FormControl mt="10px" w="100%" id="oem_spec">
               <FormLabel>OEM Spec</FormLabel>
-              <Input
-                onChange={change}
-                placeholder="6480d1b..."
-                type="text"
-                name="oem_spec"
-              />
             </FormControl>
             <Box>
               <Grid mt="10px" templateColumns="repeat(2, 1fr)" gap={1}>

@@ -33,7 +33,6 @@ const Login = () => {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log("first");
     setloading(true);
     try {
       let info = await axios_create.post("/auth/login", { ...data });
@@ -50,7 +49,6 @@ const Login = () => {
       sessionStorage.setItem("id", info.data.id);
       sessionStorage.setItem("username", info.data.username);
       sessionStorage.setItem("email", info.data.email);
-      console.log(token);
       setloading(false);
       navigate("/");
     } catch (error) {
@@ -65,7 +63,6 @@ const Login = () => {
       setloading(false);
     }
   }
-  console.log(data);
 
   return (
     <Box w="35%" m="5rem auto" bg="#282c34">
@@ -74,7 +71,7 @@ const Login = () => {
         <Flex
           alignItems={"center"}
           justifyContent={"center"}
-          mt="18px"
+          mt="28px"
           fontSize={"1.3rem"}
           visibility={loading ? "unset" : "hidden"}
         >
@@ -156,7 +153,7 @@ const Login = () => {
             </Text>
             <Link
               display={"inline"}
-              to="/auth/sing-up"
+              to="/auth/sign-up"
               style={{
                 color: "#282c34",
                 fontSize: "14px",

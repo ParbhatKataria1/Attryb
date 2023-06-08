@@ -16,7 +16,7 @@ const AllRoutes = () => {
         path="/"
         element={
           <PrivateRoute>
-            <Deals />{" "}
+            <Deals />
           </PrivateRoute>
         }
       />

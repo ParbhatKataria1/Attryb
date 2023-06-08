@@ -1,12 +1,20 @@
 import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
+  const navigate = useNavigate();
   return (
-    <Box  h='10vh' bg="white">
+    <Box h="10vh" position={"sticky"} top="0px" zIndex={'10'} bg="white">
       <Flex p="15px" w="95%" m="auto" justifyContent={"space-between"}>
-        <Flex alignItems={"center"} justifyContent={"space-between"}>
+        <Flex
+          cursor={"pointer"}
+          onClick={() => {
+            navigate("/");
+          }}
+          alignItems={"center"}
+          justifyContent={"space-between"}
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="34"
@@ -26,7 +34,7 @@ const Navbar = () => {
             BuyCar
           </Text>
         </Flex>
-        <Flex alignItems={"center"} w="16%" justifyContent={"space-between"}>
+        <Flex alignItems={"center"} w="23%" justifyContent={"space-between"}>
           <Link to="/">
             <Button
               bg={"red.500"}
@@ -41,13 +49,31 @@ const Navbar = () => {
           <Link to="/addcar">
             <Button>Add Car</Button>
           </Link>
+          {!sessionStorage.getItem("username") ? null : (
+            <Flex
+              justifyContent={"start"}
+              color="white"
+              alignItems={"center"}
+              h="38px"
+              bg="gray"
+              borderRadius={"6px"}
+              p="9px"
+            >
+              {sessionStorage.getItem("username").toUpperCase()}
+            </Flex>
+          )}
           <Flex
             justifyContent={"center"}
             borderRadius={"50%"}
             w="37px"
             h="37px"
             alignItems={"center"}
-            cursor={'pointer'}
+            cursor={"pointer"}
+            heading="logout"
+            onClick={() => {
+              sessionStorage.clear();
+              navigate("/auth/login");
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
