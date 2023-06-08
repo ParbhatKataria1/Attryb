@@ -5,6 +5,7 @@ import Deals from "../Pages/Deals";
 import PrivateRoute from "./PrivateRoute";
 import AddCar from "../Pages/AddCar";
 import Signup from "../Pages/Signup";
+import Details from "../Pages/Details";
 
 const AllRoutes = () => {
   return (
@@ -24,7 +25,7 @@ const AllRoutes = () => {
         path="/:id"
         element={
           <PrivateRoute>
-            <Deals />{" "}
+            <Details />{" "}
           </PrivateRoute>
         }
       />

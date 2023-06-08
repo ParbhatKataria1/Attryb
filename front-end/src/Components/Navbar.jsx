@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
-    <Box bg="white">
+    <Box  h='10vh' bg="white">
       <Flex p="15px" w="95%" m="auto" justifyContent={"space-between"}>
         <Flex alignItems={"center"} justifyContent={"space-between"}>
           <svg

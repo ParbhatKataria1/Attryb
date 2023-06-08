@@ -12,6 +12,21 @@ import {
   Select,
   Text,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+  useDisclosure,
+  FormControl,
+  FormLabel,
+  InputLeftElement,
+  InputLeftAddon,
+  UnorderedList,
+  InputRightAddon,
+  Spinner,
 } from "@chakra-ui/react";
 import React, { useEffect, useRef, useState } from "react";
 import axios_create from "../Utils/axios_instance";
@@ -30,11 +45,16 @@ const Deals = () => {
   async function fetchData() {
     setloading(true);
     try {
-      let item = await axios_create.get("/inventory");
+      let item = await axios_create.get("/inventory", {
+        params: filter,
+      });
       item = item.data;
       setuserid(item.userid);
+      console.log(item.data);
       setdata(item.data);
       setloading(false);
+
+      console.log("first");
     } catch (error) {
       toast({
         title: "Not able to Get The Data",
@@ -50,7 +70,35 @@ const Deals = () => {
   useEffect(() => {
     fetchData();
   }, [filter]);
-  console.log(data);
+
+  async function delete_item(id) {
+    try {
+      await axios_create.delete(`/inventory/${id}`);
+      fetchData();
+      toast({
+        title: "Item Deleted",
+        description: "Item is deleted from the Database",
+        status: "success",
+        duration: 9000,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    } catch (error) {
+      toast({
+        title: "Not Delete",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    }
+  }
+
+  function update_date() {
+    fetchData();
+  }
+  console.log(filter);
   return (
     <Flex w="100%" m=" auto">
       <Box
@@ -63,7 +111,14 @@ const Deals = () => {
         alignItems={"center"}
       >
         <InputGroup>
-          <Input name="search" type="search" />
+          <Input
+            color={"black"}
+            onChange={(e) => {
+              setfilter((prev) => ({ ...prev, model: e.target.value }));
+            }}
+            name="search"
+            type="search"
+          />
           <InputRightElement h={"full"}>
             <Button variant={"ghost"}>
               <SearchIcon />
@@ -85,7 +140,14 @@ const Deals = () => {
             >
               Min Price :
             </Text>
-            <Input w="50px" placeholder="-1" outline={"#003a5e"}></Input>
+            <Input
+              w="100px"
+              placeholder="-1"
+              outline={"#003a5e"}
+              onChange={(e) => {
+                setfilter((prev) => ({ ...prev, min_price: +e.target.value }));
+              }}
+            ></Input>
           </Flex>
           <Flex justifyContent={"space-between"} alignItems={"center"}>
             <Text
@@ -96,7 +158,13 @@ const Deals = () => {
             >
               Max Price :
             </Text>
-            <Input w="50px" placeholder="-1"></Input>
+            <Input
+              onChange={(e) => {
+                setfilter((prev) => ({ ...prev, max_price: +e.target.value }));
+              }}
+              w="100px"
+              placeholder="-1"
+            ></Input>
           </Flex>
         </Box>
 
@@ -115,7 +183,17 @@ const Deals = () => {
             >
               Min Mileage :
             </Text>
-            <Input w="50px" placeholder="-1" outline={"#003a5e"}></Input>
+            <Input
+              onChange={(e) => {
+                setfilter((prev) => ({
+                  ...prev,
+                  min_mileage: +e.target.value,
+                }));
+              }}
+              w="100px"
+              placeholder="-1"
+              outline={"#003a5e"}
+            ></Input>
           </Flex>
           <Flex justifyContent={"space-between"} alignItems={"center"}>
             <Text
@@ -126,18 +204,29 @@ const Deals = () => {
             >
               Max Mileage :
             </Text>
-            <Input w="50px" placeholder="-1"></Input>
+            <Input
+              onChange={(e) => {
+                setfilter((prev) => ({
+                  ...prev,
+                  max_mileage: +e.target.value,
+                }));
+              }}
+              w="100px"
+              placeholder="-1"
+            ></Input>
           </Flex>
         </Box>
 
         <Select
           mt="30px"
           fontWeight={"bold"}
-          colorScheme="#003a5e"
-          bg="#003a5e"
-          color={"lightgray"}
+          colorScheme="white"
+          color={"#003a5e"}
           w="100%"
           placeholder="Choose Color"
+          onChange={(e) => {
+            setfilter((prev) => ({ ...prev, color: e.target.value }));
+          }}
         >
           <option value="silver">Silver</option>
           <option value="black">Black</option>
@@ -147,13 +236,26 @@ const Deals = () => {
           <option value="blue">Blue</option>
           <option value="white">White</option>
         </Select>
+
+        <Button
+          color="white"
+          mt="20px"
+          bg="#003a5e"
+          w="100%"
+          onClick={(e) => {
+            setfilter({});
+          }}
+        >
+          Remove Filters
+        </Button>
       </Box>
-      <Box p="20px">
+      <Box m="auto" mt="20px" w="78%" p="20px">
         <Grid templateColumns="repeat(2, 1fr)" gap={6}>
           {data.length &&
             data.map((el) => {
               return (
                 <GridItem
+                  boxShadow={"rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"}
                   borderRadius={"10px"}
                   color={"black"}
                   key={el._id}
@@ -163,9 +265,9 @@ const Deals = () => {
                   <Flex>
                     <Image
                       w="40%"
-                      h="350px"
+                      h="370px"
                       objectFit={"contain"}
-                      borderRight={"2px solid gray"}
+                      borderRight={"2px solid #f3efef"}
                       src={el.image}
                     />
                     <Box
@@ -297,12 +399,14 @@ const Deals = () => {
                           })}
                         </Flex>
                       </Flex>
-                      <Flex justifyContent={"space-between"}>
+                      <Flex mt="20px" justifyContent={"space-between"}>
                         <Link to={`/${el._id}`}>
                           <Button>More Details</Button>
                         </Link>
-                        {userid == el.dealer._id && <Button>Edit</Button>}
-                        {userid == el.dealer._id && <Button>Delete</Button>}
+                        {userid == el.dealer._id && (
+                          <BasicUsage data={el} update_date={update_date} />
+                        )}
+                        {userid == el.dealer._id && <Button onClick={()=>{delete_item(el._id)}}>Delete</Button>}
                       </Flex>
                     </Box>
                   </Flex>
@@ -314,5 +418,470 @@ const Deals = () => {
     </Flex>
   );
 };
+// const init = {
+//   image: "",
+//   description: "",
+//   odometer: "",
+//   original_paint: "",
+//   oem_spec: "",
+//   previous_buyer: "",
+//   registration_place: "",
+//   reported_accident: "",
+//   scratches: "",
+// };
+function BasicUsage({ data, update_date }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [item, setitem] = useState(data);
+  const inputRef = useRef();
+  const [oemdata, set_oemdata] = useState([]);
+  const [oemind, set_oemind] = useState();
+  const [loading, setloading] = useState(false);
+  const toast = useToast();
+  function change(e) {
+    let name = e.target.name;
+    let value = e.target.value;
+    setitem({ ...item, [name]: value });
+  }
+
+  function deleteItem(i) {
+    let obj = { ...item };
+    let arr = obj.description.filter((el, ind) => {
+      return ind != i;
+    });
+    obj.description = arr;
+    setitem(obj);
+  }
+  function addvalue(e) {
+    let value = inputRef.current.value;
+    let obj = { ...item };
+    obj.description.push(value);
+    setitem(obj);
+    inputRef.current.value = "";
+  }
+  async function fetch_oem() {
+    let data = await axios_create.get("/oem");
+    data = data.data;
+    set_oemdata(data);
+  }
+
+  function selected_oem(ind, id) {
+    set_oemind(ind);
+    setitem({ ...item, oem_spec: id });
+  }
+  useEffect(() => {
+    fetch_oem();
+  }, []);
+  async function submitUpdate() {
+    try {
+      setloading(true);
+      await axios_create.patch(`/inventory/${item._id}`, { ...item });
+      update_date();
+      setloading(false);
+      toast({
+        title: "Changes Updated",
+        description: "Changes are saved in the System",
+        status: "success",
+        duration: 9000,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    } catch (error) {
+      setloading(false);
+      toast({
+        title: "Error in Updating",
+        description: error.message,
+        status: "error",
+        duration: 9000,
+        position: "bottom-left",
+        isClosable: true,
+      });
+    }
+  }
+  return (
+    <>
+      <Button onClick={onOpen}>Edit</Button>
+
+      <Modal w="700px" isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Update Details </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl w="100%" id="image">
+              <FormLabel>Image</FormLabel>
+              <InputGroup>
+                <InputLeftAddon children="https://" />
+                <Input value={item.image} onChange={change} name="image" />
+              </InputGroup>
+            </FormControl>
+            <FormControl mt="10px" w="100%" id="description">
+              <FormLabel>Description</FormLabel>
+              <InputGroup>
+                <Input ref={inputRef} name="description" />
+                <Button onClick={addvalue}>
+                  <InputRightAddon children="Add" />
+                </Button>
+              </InputGroup>
+            </FormControl>
+            <Box>
+              {item.description.length &&
+                item.description?.map((el, ind) => {
+                  return (
+                    <Flex
+                      mt="4px"
+                      borderRadius={"10px"}
+                      justifyContent={"space-between"}
+                      p="7px"
+                      bg="pink.400"
+                      color="white"
+                    >
+                      {el}
+                      <span
+                        onClick={() => {
+                          deleteItem(ind);
+                        }}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          marginLeft: "5px",
+                          cursor: "pointer",
+                        }}
+                      >
+                        <svg
+                          clip-rule="evenodd"
+                          fill-rule="evenodd"
+                          stroke-linejoin="round"
+                          width="30px"
+                          height="30px"
+                          stroke-miterlimit="2"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="white"
+                        >
+                          <path
+                            fill="white"
+                            d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z"
+                          />
+                        </svg>
+                      </span>
+                    </Flex>
+                  );
+                })}
+            </Box>
+            <Flex justifyContent={"space-between"}>
+              <FormControl mt="10px" w="45%" id="odometer">
+                <FormLabel>Odometer</FormLabel>
+                <Input
+                  type="number"
+                  onChange={change}
+                  value={item.odometer}
+                  name="odometer"
+                />
+              </FormControl>
+              <FormControl mt="10px" w="45%" id="original_paint">
+                <FormLabel>Original Paint</FormLabel>
+                <Select
+                  onChange={change}
+                  value={item.original_paint}
+                  placeholder="Choose Color"
+                  name="original_paint"
+                >
+                  <option value="silver">Silver</option>
+                  <option value="red">Red</option>
+                  <option value="blue">Blue</option>
+                  <option value="white">White</option>
+                  <option value="yellow">Yellow</option>
+                  <option value="black">Black</option>
+                </Select>
+              </FormControl>
+            </Flex>
+            <FormControl mt="10px" w="100%" id="oem_spec">
+              <FormLabel>OEM Spec</FormLabel>
+              <Input
+                onChange={change}
+                placeholder="6480d1b..."
+                type="text"
+                name="oem_spec"
+              />
+            </FormControl>
+            <Box>
+              <Grid mt="10px" templateColumns="repeat(2, 1fr)" gap={1}>
+                {oemdata.length &&
+                  oemdata.map((data, ind) => {
+                    return (
+                      <Box
+                        cursor={"pointer"}
+                        onClick={() => {
+                          selected_oem(ind, data._id);
+                        }}
+                        w="95%"
+                        border={
+                          oemind == ind
+                            ? "2px solid green"
+                            : "2px solid #eaeaea"
+                        }
+                        textAlign={"left"}
+                        borderRadius={"10px"}
+                        fontSize={"15px"}
+                        p="8px"
+                      >
+                        <Flex
+                          fontSize={"15px"}
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                        >
+                          <Text>Model: </Text>
+                          <Text>
+                            {data.model ? data.model : "Not Mentioned"}
+                          </Text>
+                        </Flex>
+                        <Flex
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          fontSize={"13px"}
+                          mt="5px"
+                        >
+                          <Text>Year</Text>
+                          <Text>{data.year ? data.year : "Not Mentioned"}</Text>
+                        </Flex>
+
+                        <Divider orientation="horizontal" />
+                        <Flex
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          fontSize={"13px"}
+                        >
+                          <Text>Price</Text>
+                          <Text>
+                            {data.price ? data.price + " Rs" : "Not Mentioned"}
+                          </Text>
+                        </Flex>
+
+                        <Divider orientation="horizontal" />
+                        <Flex
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          fontSize={"13px"}
+                        >
+                          <Text>Max Speed</Text>
+                          <Text>
+                            {data.max_speed
+                              ? data.max_speed + "Km/h"
+                              : "Not Mentioned"}
+                          </Text>
+                        </Flex>
+
+                        <Divider orientation="horizontal" />
+                        <Flex
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          fontSize={"13px"}
+                        >
+                          <Text>Mileage</Text>
+                          <Text>
+                            {data.mileage
+                              ? data.mileage + "Km/l"
+                              : "Not Mentioned"}
+                          </Text>
+                        </Flex>
+
+                        <Divider orientation="horizontal" />
+                        <Flex
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          fontSize={"13px"}
+                        >
+                          <Text>Power</Text>
+                          <Text>
+                            {data.power ? data.power + "BHP" : "Not Mentioned"}
+                          </Text>
+                        </Flex>
+
+                        <Flex
+                          justifyContent={"space-between"}
+                          alignItems={"center"}
+                          fontSize={"15px"}
+                          mt="5px"
+                        >
+                          <Text>Colors</Text>
+                          <Flex
+                            alignItems={"center"}
+                            justifyContent={"space-between"}
+                          >
+                            {data.color.map((col) => {
+                              return (
+                                <Box
+                                  display={"inline-flex"}
+                                  borderRadius={"50%"}
+                                  m="10px"
+                                  w="15px"
+                                  h="15px"
+                                  bg={col}
+                                  border="2px solid lightgray"
+                                ></Box>
+                              );
+                            })}
+                          </Flex>
+                        </Flex>
+                      </Box>
+                    );
+                  })}
+              </Grid>
+            </Box>
+            <Flex justifyContent={"space-between"}>
+              <FormControl mt="10px" w="45%" id="previous_buyer">
+                <FormLabel>Previous Buyer</FormLabel>
+                <Input
+                  onChange={change}
+                  value={item.previous_buyer}
+                  type="number"
+                  name="previous_buyer"
+                />
+              </FormControl>
+              <FormControl mt="10px" w="45%" id="registration_place">
+                <FormLabel>Registration Place</FormLabel>
+                <Input
+                  onChange={change}
+                  value={item.registration_place}
+                  type="text"
+                  name="registration_place"
+                />
+              </FormControl>
+            </Flex>
+
+            <Flex justifyContent={"space-between"}>
+              <FormControl mt="10px" w="45%" id="reported_accident">
+                <FormLabel>Reported Accident</FormLabel>
+                <Input
+                  onChange={change}
+                  value={item.reported_accident}
+                  type="number"
+                  name="reported_accident"
+                />
+              </FormControl>
+              <FormControl mt="10px" w="45%" id="scratches">
+                <FormLabel>Scratches</FormLabel>
+                <Input
+                  onChange={change}
+                  value={item.scratches}
+                  type="number"
+                  name="scratches"
+                />
+              </FormControl>
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme="blue" mr={3} onClick={onClose}>
+              Close
+            </Button>
+            <Button onClick={submitUpdate} variant="ghost">
+              Done{" "}
+              <Spinner visibility={loading ? "unset" : "hidden"} ml="10px" />
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </>
+  );
+}
+
+function OEM_Specs({ data }) {
+  return (
+    <Box
+      border={"2px solid #eaeaea"}
+      textAlign={"left"}
+      borderRadius={"10px"}
+      fontSize={"21px"}
+      p="20px"
+    >
+      <Flex
+        fontSize={"19px"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
+        <Text>Model: </Text>
+        <Text>{data.model ? data.model : "Not Mentioned"}</Text>
+      </Flex>
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={"17px"}
+        mt="15px"
+      >
+        <Text>Year</Text>
+        <Text>{data.year ? data.year : "Not Mentioned"}</Text>
+      </Flex>
+
+      <Divider orientation="horizontal" />
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={"17px"}
+      >
+        <Text>Price</Text>
+        <Text>{data.price ? data.price + " Rs" : "Not Mentioned"}</Text>
+      </Flex>
+
+      <Divider orientation="horizontal" />
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={"17px"}
+      >
+        <Text>Max Speed</Text>
+        <Text>
+          {data.max_speed ? data.max_speed + "Km/h" : "Not Mentioned"}
+        </Text>
+      </Flex>
+
+      <Divider orientation="horizontal" />
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={"17px"}
+      >
+        <Text>Mileage</Text>
+        <Text>{data.mileage ? data.mileage + "Km/l" : "Not Mentioned"}</Text>
+      </Flex>
+
+      <Divider orientation="horizontal" />
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={"17px"}
+      >
+        <Text>Power</Text>
+        <Text>
+          {data.oem_spec.power ? data.oem_spec.power + "BHP" : "Not Mentioned"}
+        </Text>
+      </Flex>
+
+      <Flex
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={"19px"}
+        mt="15px"
+      >
+        <Text>Colors</Text>
+        <Flex alignItems={"center"} justifyContent={"space-between"}>
+          {data.color.map((col) => {
+            return (
+              <Box
+                display={"inline-flex"}
+                borderRadius={"50%"}
+                m="10px"
+                w="30px"
+                h="30px"
+                bg={col}
+                border="2px solid lightgray"
+              ></Box>
+            );
+          })}
+        </Flex>
+      </Flex>
+    </Box>
+  );
+}
 
 export default Deals;
