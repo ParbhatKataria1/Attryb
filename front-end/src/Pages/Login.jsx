@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { ViewOffIcon, ViewIcon } from "@chakra-ui/icons";
 import React, { useState } from "react";
-import { Form, Link } from "react-router-dom";
+import { Form, Link, useNavigate } from "react-router-dom";
 import axios_create from "../Utils/axios_instance";
 const init = {
   email: "",
@@ -24,6 +24,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setloading] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
 
   function change(e) {
     let name = e.target.name;
@@ -35,8 +36,7 @@ const Login = () => {
     console.log("first");
     setloading(true);
     try {
-      await axios_create.post("/auth/login", { ...data });
-      setdata({ ...init });
+      let info = await axios_create.post("/auth/login", { ...data });
       toast({
         title: "Login Successful",
         description: "You are see the other pages as well",
@@ -45,7 +45,14 @@ const Login = () => {
         position: "bottom-left",
         isClosable: true,
       });
+      const token = info.data.token;
+      sessionStorage.setItem("token", info.data.token);
+      sessionStorage.setItem("id", info.data.id);
+      sessionStorage.setItem("username", info.data.username);
+      sessionStorage.setItem("email", info.data.email);
+      console.log(token);
       setloading(false);
+      navigate("/");
     } catch (error) {
       toast({
         title: "Provide Correct Credentials",
@@ -154,7 +161,7 @@ const Login = () => {
                 color: "#282c34",
                 fontSize: "14px",
                 textDecoration: "underline",
-                fontWeight:"bolder"
+                fontWeight: "bolder",
               }}
             >
               SignUp

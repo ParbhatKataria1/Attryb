@@ -19,6 +19,15 @@ const AllRoutes = () => {
           </PrivateRoute>
         }
       />
+
+      <Route
+        path="/:id"
+        element={
+          <PrivateRoute>
+            <Deals />{" "}
+          </PrivateRoute>
+        }
+      />
       <Route
         path="/addcar"
         element={
