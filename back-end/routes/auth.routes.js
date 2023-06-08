@@ -45,12 +45,14 @@ auth.post('/login', async(req, res)=>{
             if(!user.length){
                 res.status(404).send({'msg':"User not found"});
             }else {
-                const {password:hash, _id, username} = user;
+                const {password:hash, _id, username} = user[0];
+                console.log(_id, '_id', username)
                 bcrypt.compare(password, hash, function(err, result) {
                     if(result){
-                        res.status(401).send({'msg':"Wrong Credentials Provided"});
-                    }else if(err) {
                         res.status(200).send({id:_id,username, email, token:'Bearer '+jwt.sign({ userid: _id }, process.env.jwtSecret) })
+                        
+                    }else {
+                        res.status(401).send({'msg':"Wrong Credentials Provided"});
                     }
                 });
             }

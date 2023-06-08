@@ -9,6 +9,7 @@ const authentication = async(req, res, next)=>{
         jwt.verify(token, process.env.jwtSecret, function(err, decoded) {
             
             if(err){
+
                 res.status(401).send({msg:'Invalid Token'})
             }else {
                 req.headers.userid = decoded.userid;
