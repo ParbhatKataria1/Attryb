@@ -38,7 +38,7 @@ const Login = () => {
       let info = await axios_create.post("/auth/login", { ...data });
       toast({
         title: "Login Successful",
-        description: "You are see the other pages as well",
+        description: "You can see the other pages as well",
         status: "success",
         duration: 9000,
         position: "bottom-left",

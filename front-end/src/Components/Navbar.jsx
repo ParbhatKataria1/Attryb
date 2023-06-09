@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 const Navbar = () => {
   const navigate = useNavigate();
   return (
-    <Box h="10vh" position={"sticky"} top="0px" zIndex={'10'} bg="white">
+    <Box borderBottom={'2px solid #eaeaea'} h="10vh" position={"sticky"} top="0px" zIndex={"10"} bg="white">
       <Flex p="15px" w="95%" m="auto" justifyContent={"space-between"}>
         <Flex
           cursor={"pointer"}
@@ -34,9 +34,10 @@ const Navbar = () => {
             BuyCar
           </Text>
         </Flex>
-        <Flex alignItems={"center"} w="23%" justifyContent={"space-between"}>
+        <Flex w="28%" alignItems={"center"} justifyContent={"flex-end"}>
           <Link to="/">
             <Button
+              mx="10px"
               bg={"red.500"}
               _hover={{
                 bg: "red.300",
@@ -47,10 +48,11 @@ const Navbar = () => {
             </Button>
           </Link>
           <Link to="/addcar">
-            <Button>Add Car</Button>
+            <Button mx="10px">Add Car</Button>
           </Link>
           {!sessionStorage.getItem("username") ? null : (
             <Flex
+              mx="10px"
               justifyContent={"start"}
               color="white"
               alignItems={"center"}
@@ -58,11 +60,13 @@ const Navbar = () => {
               bg="gray"
               borderRadius={"6px"}
               p="9px"
+              cursor={"no-drop"}
             >
               {sessionStorage.getItem("username").toUpperCase()}
             </Flex>
           )}
           <Flex
+            mx="10px"
             justifyContent={"center"}
             borderRadius={"50%"}
             w="37px"

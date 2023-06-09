@@ -263,7 +263,7 @@ m=' auto'
             fontSize={"17px"}
           >
             <Text>Registration Place</Text>
-            <Text>{data.registration_place || 0} Km/h</Text>
+            <Text>{data.registration_place || 0}</Text>
           </Flex>
 
           <Box mt="20px" fontSize={"17px"} color={"black"}>
