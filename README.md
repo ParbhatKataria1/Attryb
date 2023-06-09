@@ -5,11 +5,13 @@
  
 # Features
 
-<ul><li>Authentication</li>
+<ul>
+<li>Authentication</li>
 <li>Crud Operation (add, delete, update, post)</li>
 <li>Filteration</li>
 <li>Pagination</li>
-<li>Account Creation and Login</li><ul>
+<li>Account Creation and Login</li>
+ </ul>
 
 # Tech Stack :
  
