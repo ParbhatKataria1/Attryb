@@ -1,10 +1,10 @@
 # BuyCar
-![image](https://gcdnb.pbrd.co/images/IbIIVA44JSzX.png?o=1)
 
 # Overview
  BuyCar is a website for selling second-hand cars.
  
 # Features
+
 <ul><li>Authentication</li>
 <li>Crud Operation (add, delete, update, post)</li>
 <li>Filteration</li>
