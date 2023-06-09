@@ -1,18 +1,8 @@
-# BuyCar
+# [BuyCar](https://attryb-parbhat.netlify.app/auth/login)--
 
 # Overview
  BuyCar is a website for selling second-hand cars.
  
-# Features
-
-<ul>
-<li>Authentication</li>
-<li>Crud Operation (add, delete, update, post)</li>
-<li>Filteration</li>
-<li>Pagination</li>
-<li>Account Creation and Login</li>
- </ul>
-
 # Tech Stack :
  
   ## Front End
@@ -36,6 +26,16 @@
    <img src='https://camo.githubusercontent.com/6fba93c5a92eaaf7ccb40d56ed008d11425fde3d75bf3c6d3e54a048c41d2f43/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f52656e6465722d3433303039383f7374796c653d666f722d7468652d6261646765266c6f676f3d6865726f6b75266c6f676f436f6c6f723d7768697465' align='center' alt='next' />
   </div>
   
+  # Features
+
+<ul>
+<li>Authentication</li>
+<li>Crud Operation (add, delete, update, post)</li>
+<li>Filteration</li>
+<li>Pagination</li>
+<li>Account Creation and Login</li>
+ </ul>
+  
  ## Home Page
  ![image](https://gcdnb.pbrd.co/images/IbIIVA44JSzX.png?o=1)
  
@@ -46,5 +46,5 @@
  ![image](https://gcdnb.pbrd.co/images/BNL9faunLASx.png?o=1)
  
   
-# [Deployed Links](https://attryb-parbhat.netlify.app/auth/login)
+
 
