@@ -11,6 +11,7 @@
 <li>Pagination</li>
 <li>Account Creation and Login</li>
 
+ 
 # Tech Stack :
  
   ## Front End
