@@ -1,45 +1,79 @@
 const express = require("express");
 const { InventoryModel } = require("../model/inventory.model");
 const inventory = express.Router();
+const { upload } = require("../utils/multer");
+// const cloudinary = require("../utils/cloudinary").v2;
+const cloudinary = require("cloudinary").v2;
+require("dotenv").config();
+
+cloudinary.config({
+  cloud_name: process.env.cloud_name,
+  api_key: process.env.cloud_api_key,
+  api_secret: process.env.cloud_api_secret,
+});
 
 inventory.get("/", async (req, res) => {
   const userid = req.headers.userid;
   try {
     const obj = req.query;
-
+    let length = await InventoryModel.find();
+    length = length.length;
     let data;
     if (obj.limit) {
+      let page = +obj.page || 1;
+      let limit = +obj.limit;
       data = await InventoryModel.find()
+        .skip((page - 1) * limit)
+        .limit(limit)
         .populate("oem_spec")
-        .populate("dealer")
-        .skip(obj.page)
-        .limit(obj.limit);
+        .populate("dealer");
     } else {
       data = await InventoryModel.find()
         .populate("oem_spec")
         .populate("dealer");
     }
-
+    if (!+obj.max_price) obj.max_price = Infinity;
+    if (!+obj.max_mileage) obj.max_mileage = Infinity;
     if (obj.model)
       data = data.filter((el) =>
         el.oem_spec.model.match(new RegExp(obj.model, "i"))
       );
     if (obj.color)
       data = data.filter((el) => el.oem_spec.color.includes(obj.color));
-    if (obj.min_price)
-      data = data.filter((el) => el.oem_spec.price >= obj.min_price);
-    if (obj.max_price)
-      data = data.filter((el) => el.oem_spec.price <= obj.max_price);
-    if (obj.min_mileage)
-      data = data.filter((el) => el.oem_spec.mileage >= obj.min_mileage);
-    if (obj.max_mileage)
-      data = data.filter((el) => el.oem_spec.mileage <= obj.max_mileage);
+    if (+obj.min_price)
+      data = data.filter((el) => +el.oem_spec.price >= +obj.min_price);
+    if (+obj.max_price)
+      data = data.filter((el) => +el.oem_spec.price <= +obj.max_price);
+    if (+obj.min_mileage)
+      data = data.filter((el) => +el.oem_spec.mileage >= +obj.min_mileage);
+    if (+obj.max_mileage)
+      data = data.filter((el) => +el.oem_spec.mileage <= +obj.max_mileage);
 
-    res.status(200).send({ data, userid });
+    res.status(200).send({ data, userid, length });
   } catch (error) {
     res.status(400).send("Not able to get the data");
   }
 });
+
+// inventory.post("/",  async (req, res) => {
+//   const userid = req.headers.userid;
+//   const body = req.body;
+//   try {
+//     // console.log(req?.file?.path);
+// if (req?.file?.path) {
+//   let image = "";
+//   image = await cloudinary.uploader.upload(req.file.path);
+//   image = image.secure_url;
+//   body.image = image;
+// }
+//     console.log(body);
+//     const item = new InventoryModel({ ...body, dealer: userid });
+//     await item.save();
+//     res.status(201).send("Item is created");
+//   } catch (error) {
+//     res.status(400).send("Not able to create the Item");
+//   }
+// });
 
 inventory.post("/", async (req, res) => {
   const userid = req.headers.userid;
@@ -47,11 +81,36 @@ inventory.post("/", async (req, res) => {
   try {
     const item = new InventoryModel({ dealer: userid, ...body });
     await item.save();
+    console.log(body)
+    console.log(req.file.path);
     res.status(201).send("Item is created");
   } catch (error) {
     res.status(400).send("Not able to create the Item");
   }
 });
+
+
+// inventory.post("/image", upload.single("image"), async (req, res) => {
+//   const userid = req.headers.userid;
+//   const body = req.body;
+//   try {
+//     console.log("first", req.file.path);
+//     cloudinary.uploader.upload(req.file.path, function (error, result) {
+//       if (error) {
+//         console.error("Upload error:", error);
+//       } else {
+//         console.log("Image uploaded:", result);
+//       }
+//     });
+//     // image = image.secure_url;
+//     // body.image = image
+//     // const item = new InventoryModel({ dealer: userid, ...body });
+//     // await item.save();
+//     res.status(201).send("Item is created");
+//   } catch (error) {
+//     res.status(400).send("Not able to create the Item");
+//   }
+// });
 
 inventory.patch("/:_id", async (req, res) => {
   const userid = req.headers.userid;
@@ -85,6 +144,18 @@ inventory.delete("/:_id", async (req, res) => {
     }
   } catch (error) {
     res.status(400).send("Error in Deleting the data");
+  }
+});
+inventory.get("/:_id", async (req, res) => {
+  const _id = req.params;
+  try {
+    let data = await InventoryModel.findById(_id)
+      .populate("oem_spec")
+      .populate("dealer");
+
+    res.status(200).send(data);
+  } catch (error) {
+    res.status(400).send("Not able to get the data");
   }
 });
 
