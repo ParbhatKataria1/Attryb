@@ -55,40 +55,62 @@ inventory.get("/", async (req, res) => {
   }
 });
 
-inventory.post("/", upload.single("image"), async (req, res) => {
-  const userid = req.headers.userid;
-  const body = req.body;
-  try {
-    console.log(req?.file?.path);
-    if (req?.file?.path) {
-      let image = "";
-      image = await cloudinary.uploader.upload(req.file.path);
-      image = image.secure_url;
-      body.image = image;
-    }
-    let temp = {...body}
-    console.log(temp);
-    const item = new InventoryModel({ ...temp, dealer: userid });
-    await item.save();
-    res.status(201).send("Item is created");
-  } catch (error) {
-    res.status(400).send("Not able to create the Item");
-  }
-});
-
-// inventory.post("/", async (req, res) => {
+// inventory.post("/",  async (req, res) => {
 //   const userid = req.headers.userid;
 //   const body = req.body;
 //   try {
-//     const item = new InventoryModel({ dealer: userid, ...body });
-//     await item.save();
+//     // console.log(req?.file?.path);
+// if (req?.file?.path) {
+//   let image = "";
+//   image = await cloudinary.uploader.upload(req.file.path);
+//   image = image.secure_url;
+//   body.image = image;
+// }
 //     console.log(body);
+//     const item = new InventoryModel({ ...body, dealer: userid });
+//     await item.save();
 //     res.status(201).send("Item is created");
 //   } catch (error) {
 //     res.status(400).send("Not able to create the Item");
 //   }
 // });
 
+inventory.post("/", async (req, res) => {
+  const userid = req.headers.userid;
+  const body = req.body;
+  try {
+    const item = new InventoryModel({ dealer: userid, ...body });
+    await item.save();
+    console.log(body)
+    console.log(req.file.path);
+    res.status(201).send("Item is created");
+  } catch (error) {
+    res.status(400).send("Not able to create the Item");
+  }
+});
+
+
+// inventory.post("/image", upload.single("image"), async (req, res) => {
+//   const userid = req.headers.userid;
+//   const body = req.body;
+//   try {
+//     console.log("first", req.file.path);
+//     cloudinary.uploader.upload(req.file.path, function (error, result) {
+//       if (error) {
+//         console.error("Upload error:", error);
+//       } else {
+//         console.log("Image uploaded:", result);
+//       }
+//     });
+//     // image = image.secure_url;
+//     // body.image = image
+//     // const item = new InventoryModel({ dealer: userid, ...body });
+//     // await item.save();
+//     res.status(201).send("Item is created");
+//   } catch (error) {
+//     res.status(400).send("Not able to create the Item");
+//   }
+// });
 
 inventory.patch("/:_id", async (req, res) => {
   const userid = req.headers.userid;
