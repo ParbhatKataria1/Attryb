@@ -1,11 +1,32 @@
-import { Box, Button, Flex, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Image,
+  Text,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  AlertDialogCloseButton,
+  useDisclosure,
+} from "@chakra-ui/react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const navigate = useNavigate();
   return (
-    <Box borderBottom={'2px solid #eaeaea'} h="10vh" position={"sticky"} top="0px" zIndex={"10"} bg="white">
+    <Box
+      borderBottom={"2px solid #eaeaea"}
+      h="10vh"
+      position={"sticky"}
+      top="0px"
+      zIndex={"10"}
+      bg="white"
+    >
       <Flex p="15px" w="95%" m="auto" justifyContent={"space-between"}>
         <Flex
           cursor={"pointer"}
@@ -74,19 +95,9 @@ const Navbar = () => {
             alignItems={"center"}
             cursor={"pointer"}
             heading="logout"
-            onClick={() => {
-              sessionStorage.clear();
-              navigate("/auth/login");
-            }}
+           
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-            >
-              <path d="M16 10v-5l8 7-8 7v-5h-8v-4h8zm-16-8v20h14v-2h-12v-16h12v-2h-14z" />
-            </svg>
+            <AlertDialogExample/>
           </Flex>
         </Flex>
       </Flex>
@@ -95,3 +106,55 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+function AlertDialogExample() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = React.useRef();
+  const navigate = useNavigate();
+
+  return (
+    <>
+      <Box colorScheme="red" onClick={onOpen}>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+        >
+          <path d="M16 10v-5l8 7-8 7v-5h-8v-4h8zm-16-8v20h14v-2h-12v-16h12v-2h-14z" />
+        </svg>
+      </Box>
+
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Log Out 
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to logout?
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={()=>{
+                  sessionStorage.clear();
+                  navigate("/auth/login");
+                  onClose();
+              }} ml={3}>
+                Logout
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </>
+  );
+}

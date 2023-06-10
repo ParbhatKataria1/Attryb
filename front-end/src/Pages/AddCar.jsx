@@ -226,7 +226,7 @@ const AddCar = () => {
                   mb="10px"
                   fontSize={"17px"}
                 >
-                  Click On Any Model From The Table
+                  Click On A Table Row To Choose
                 </Button>
                 <FormControl mt="20px" w="60%" id="oem_spec">
                   <Flex justifyContent={"end"} alignItems={"center"}>

@@ -34,6 +34,8 @@ import { SearchIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
 import axios from "axios";
+import DeleteAlert from "../Components/DeleteAlert";
+import Filter from "../Components/Filter";
 
 const Deals = () => {
   axios_create.defaults.headers.common["Authorization"] =
@@ -42,7 +44,7 @@ const Deals = () => {
   const [loading, setloading] = useState(false);
   const [userid, setuserid] = useState("");
   const toast = useToast();
-  const [limit, setlimit] = useState(4);
+  const [limit, setlimit] = useState(6);
   const [length, setlength] = useState();
   let [searchParams, setSearchParams] = useSearchParams();
 
@@ -66,6 +68,7 @@ const Deals = () => {
 
   async function fetchData(data = null) {
     setloading(true);
+    console.log(filter, searchParams.get('model'))
     try {
       let item = await axios_create.get("/inventory", {
         params: data ? { ...data, limit } : { ...filter, limit },
@@ -90,7 +93,7 @@ const Deals = () => {
   useEffect(() => {
     setSearchParams({ ...filter });
     fetchData();
-  }, [page]);
+  }, [page, filter]);
 
   async function delete_item(id) {
     try {
@@ -121,217 +124,11 @@ const Deals = () => {
   }
   return (
     <Flex w="100%" m=" auto">
-      <Box
-        position={"sticky"}
-        top="10vh"
-        h={"100vh"}
-        w="20%"
-        p="20px"
-        pt="3rem"
-        bg="white"
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <InputGroup>
-          <Input
-            value={filter?.model || ""}
-            color={"black"}
-            onChange={(e) => {
-              setfilter((prev) => ({ ...prev, model: e.target.value }));
-              setSearchParams({
-                ...filter,
-                model: e.target.value,
-                page,
-                limit,
-              });
-              fetchData();
-            }}
-            name="search"
-            type="search"
-          />
-          <InputRightElement h={"full"}>
-            <Button variant={"ghost"}>
-              <SearchIcon />
-            </Button>
-          </InputRightElement>
-        </InputGroup>
-        <Box
-          mt="30px"
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          color="#003a5e"
-        >
-          <Flex justifyContent={"space-between"} alignItems={"center"}>
-            <Text
-              textAlign={"left"}
-              fontWeight={"bolder"}
-              fontSize={"21px"}
-              w="150px"
-            >
-              Min Price :
-            </Text>
-            <Input
-              value={filter?.min_price || 0}
-              w="100px"
-              placeholder="-1"
-              outline={"#003a5e"}
-              onChange={(e) => {
-                setfilter((prev) => {
-                  setSearchParams({ ...prev, min_price: +e.target.value });
-                  return { ...prev, min_price: +e.target.value, limit, page };
-                });
-              }}
-            ></Input>
-          </Flex>
-          <Flex justifyContent={"space-between"} alignItems={"center"}>
-            <Text
-              textAlign={"left"}
-              fontWeight={"bolder"}
-              fontSize={"21px"}
-              w="150px"
-            >
-              Max Price :
-            </Text>
-            <Input
-              value={filter?.max_price || 0}
-              onChange={(e) => {
-                setfilter((prev) => {
-                  setSearchParams({
-                    ...prev,
-                    max_price: +e.target.value,
-                    limit,
-                    page,
-                  });
-                  return { ...prev, max_price: +e.target.value };
-                });
-              }}
-              w="100px"
-              placeholder="-1"
-            ></Input>
-          </Flex>
-        </Box>
-
-        <Box
-          mt="30px"
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          color="#003a5e"
-        >
-          <Flex justifyContent={"space-between"} alignItems={"center"}>
-            <Text
-              textAlign={"left"}
-              fontWeight={"bolder"}
-              fontSize={"21px"}
-              w="150px"
-            >
-              Min Mileage :
-            </Text>
-            <Input
-              value={filter?.min_mileage || 0}
-              onChange={(e) => {
-                setfilter((prev) => {
-                  setSearchParams({
-                    ...prev,
-                    min_mileage: +e.target.value,
-                    limit,
-                    page,
-                  });
-                  return {
-                    ...prev,
-                    min_mileage: +e.target.value,
-                  };
-                });
-              }}
-              w="100px"
-              placeholder="-1"
-              outline={"#003a5e"}
-            ></Input>
-          </Flex>
-          <Flex justifyContent={"space-between"} alignItems={"center"}>
-            <Text
-              textAlign={"left"}
-              fontWeight={"bolder"}
-              fontSize={"21px"}
-              w="150px"
-            >
-              Max Mileage :
-            </Text>
-            <Input
-              value={filter?.max_mileage || 0}
-              onChange={(e) => {
-                setfilter((prev) => {
-                  setSearchParams({
-                    ...prev,
-                    max_mileage: +e.target.value,
-                    limit,
-                    page,
-                  });
-                  return {
-                    ...prev,
-                    max_mileage: +e.target.value,
-                  };
-                });
-              }}
-              w="100px"
-              placeholder="-1"
-            ></Input>
-          </Flex>
-        </Box>
-
-        <Select
-          mt="30px"
-          value={filter?.color}
-          fontWeight={"bold"}
-          colorScheme="white"
-          color={"#003a5e"}
-          w="100%"
-          placeholder="Choose Color"
-          onChange={(e) => {
-            setfilter((prev) => {
-              setSearchParams({ ...prev, color: e.target.value, limit, page });
-              return { ...prev, color: e.target.value };
-            });
-          }}
-        >
-          <option value="silver">Silver</option>
-          <option value="black">Black</option>
-          <option value="gray">Gray</option>
-          <option value="yellow">Yellow</option>
-          <option value="red">Red</option>
-          <option value="blue">Blue</option>
-          <option value="white">White</option>
-        </Select>
-        <Button
-          color="white"
-          mt="20px"
-          bg="#003a5e"
-          colorScheme="blue"
-          w="100%"
-          onClick={(e) => {
-            fetchData();
-          }}
-        >
-          Apply Filters
-        </Button>
-        <Button
-          color="white"
-          mt="20px"
-          bg="#003a5e"
-          colorScheme="blue"
-          w="100%"
-          onClick={(e) => {
-            setfilter({});
-            setSearchParams({});
-            fetchData({});
-          }}
-        >
-          Remove All Filters
-        </Button>
-      </Box>
+      <Filter item = {{filter,setfilter,fetchData, page, limit}} />
       <Box m="auto" mt="20px" w="78%" p="20px">
         {!loading ? null : <Spinner size="xl" />}
         <Box w="100%">
-          <Grid templateColumns="repeat(2, 1fr)" gap={6}>
+          <Grid templateColumns={{base:"repeat(1, 1fr)",sm:"repeat(2, 1fr)",md:"repeat(1, 1fr)", lg:"repeat(2, 1fr)", xl:"repeat(3, 1fr)"}} gap={6}>
             {!data.length
               ? null
               : data.map((el) => {
@@ -344,19 +141,20 @@ const Deals = () => {
                       w="100%"
                       bg="white"
                     >
-                      <Flex alignItems={"center"}>
+                      <Box alignItems={"center"}>
                         <Image
-                          w="40%"
-                          h="370px"
+                          w="100%"
+                          h="200px"
+                          borderRadius={"10px 10px 0px 0px"}
                           objectFit={"contain"}
-                          borderRight={"2px solid #f3efef"}
+                          borderBottom={"2px solid #f3efef"}
                           src={el.image}
                         />
                         <Box
                           textAlign={"left"}
-                          w="60%"
+                          w="100%"
                           borderRadius={"10px"}
-                          fontSize={"21px"}
+                          fontSize={"18px"}
                           p="20px"
                           justifyContent={"space-between"}
                           alignContent={"space-between"}
@@ -370,7 +168,7 @@ const Deals = () => {
                             <Text>{el.title ? el.title : "Not Mentioned"}</Text>
                           </Flex>
                           <Flex
-                            fontSize={"19px"}
+                            fontSize={"1em"}
                             justifyContent={"space-between"}
                             alignItems={"center"}
                           >
@@ -384,7 +182,7 @@ const Deals = () => {
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
-                            fontSize={"17px"}
+                            fontSize={".8em"}
                             mt="15px"
                           >
                             <Text>Year</Text>
@@ -399,7 +197,7 @@ const Deals = () => {
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
-                            fontSize={"17px"}
+                            fontSize={".8em"}
                           >
                             <Text>Price</Text>
                             <Text>
@@ -413,7 +211,7 @@ const Deals = () => {
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
-                            fontSize={"17px"}
+                            fontSize={".8em"}
                           >
                             <Text>Max Speed</Text>
                             <Text>
@@ -427,7 +225,7 @@ const Deals = () => {
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
-                            fontSize={"17px"}
+                            fontSize={".8em"}
                           >
                             <Text>Mileage</Text>
                             <Text>
@@ -441,7 +239,7 @@ const Deals = () => {
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
-                            fontSize={"17px"}
+                            fontSize={".8em"}
                           >
                             <Text>Power</Text>
                             <Text>
@@ -454,8 +252,8 @@ const Deals = () => {
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
-                            fontSize={"19px"}
-                            mt="15px"
+                            fontSize={"1em"}
+                            mt="10px"
                           >
                             <Text>Colors</Text>
                             <Flex
@@ -468,8 +266,8 @@ const Deals = () => {
                                     display={"inline-flex"}
                                     borderRadius={"50%"}
                                     m="10px"
-                                    w="30px"
-                                    h="30px"
+                                    w="20px"
+                                    h="20px"
                                     bg={col}
                                     border="2px solid lightgray"
                                   ></Box>
@@ -477,25 +275,19 @@ const Deals = () => {
                               })}
                             </Flex>
                           </Flex>
-                          <Flex mt="20px" justifyContent={"space-between"}>
+                          <Flex mt="10px" fontSize={'1em'} justifyContent={"space-between"}>
                             <Link to={`/${el._id}`}>
-                              <Button>More Details</Button>
+                              <Button size={'sm'}>More Details</Button>
                             </Link>
                             {userid == el.dealer._id && (
                               <BasicUsage data={el} update_date={update_date} />
                             )}
                             {userid == el.dealer._id && (
-                              <Button
-                                onClick={() => {
-                                  delete_item(el._id);
-                                }}
-                              >
-                                Delete
-                              </Button>
+                              <DeleteAlert delete_item={delete_item} id={el._id} />
                             )}
                           </Flex>
                         </Box>
-                      </Flex>
+                      </Box>
                     </GridItem>
                   );
                 })}
@@ -655,7 +447,7 @@ function BasicUsage({ data, update_date }) {
   }
   return (
     <>
-      <Button onClick={onOpen}>Edit</Button>
+      <Button size={'sm'} onClick={onOpen}>Edit</Button>
 
       <Modal w="700px" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
