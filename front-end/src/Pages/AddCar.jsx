@@ -30,6 +30,7 @@ import React, { useEffect, useRef, useState } from "react";
 import axios_create from "../Utils/axios_instance";
 import Slider from "react-slick";
 import AwesomeSlider from "react-awesome-slider";
+import axios from "axios";
 const init = {
   image: "",
   description: [],
@@ -53,6 +54,8 @@ const AddCar = () => {
   const [loading, setloading] = useState(false);
   const toast = useToast();
   const [search, setseach] = useState("");
+  const [load, setload] = useState(false);
+  console.log(item);
   function change(e) {
     let name = e.target.name;
     let value = e.target.value;
@@ -123,6 +126,23 @@ const AddCar = () => {
     slidesToShow: 3,
     speed: 500,
   };
+  async function handleUpload(e) {
+    const data = new FormData();
+    let image = e.target.files[0];
+    data.append("file", image);
+    data.append("upload_preset", "ml_default");
+    data.append("cloud_name", "dkcllnjpz");
+    console.log(e.target.files[0].name);
+    setload(true);
+    let temp = await axios.post(
+      `https://api.cloudinary.com/v1_1/dkcllnjpz/image/upload`,
+      data
+    );
+    setload(false);
+    temp = temp.data.secure_url;
+    setitem((prev) => ({ ...prev, image: temp }));
+    console.log(item);
+  }
   return (
     <Box pb="20px" bg="white" color={"black"}>
       <Box
@@ -138,8 +158,26 @@ const AddCar = () => {
             <FormControl w="100%" id="image">
               <FormLabel>Image</FormLabel>
               <InputGroup>
-                <InputLeftAddon children="Link" />
-                <Input value={item.image} onChange={change} name="image" />
+                <Flex alignItems={"center"} justifyContent={"space-between"}>
+                  <InputLeftAddon children="Link" />
+                  <Input value={item.image} onChange={change} name="image" />
+                  <Text mx="10px">Or</Text>
+                  <Flex w="100%" my="20px">
+                    <input
+                      onChange={handleUpload}
+                      type="file"
+                      name="image"
+                      // onChange={change}
+                    />
+                    <Text
+                      visibility={load ? "unset" : "hidden"}
+                      display={"inline"}
+                    >
+                      Uploading
+                    </Text>
+                    <Spinner ml="8px" visibility={load ? "unset" : "hidden"} />
+                  </Flex>
+                </Flex>
               </InputGroup>
             </FormControl>
           </Flex>
@@ -173,7 +211,12 @@ const AddCar = () => {
           </Flex>
           <Divider mt="20px" />
           <Flex justifyContent={"space-between"}>
-            <Box pr='20px' borderRight={"1px solid #eaeaea"} textAlign={"left"} w="60%">
+            <Box
+              pr="20px"
+              borderRight={"1px solid #eaeaea"}
+              textAlign={"left"}
+              w="60%"
+            >
               <Flex justifyContent={"space-between"}>
                 <Button
                   textAlign={"left"}
@@ -275,7 +318,7 @@ const AddCar = () => {
               </TableContainer>
             </Box>
             <Divider orientation="vertical" />
-            <Flex w="38%" alignItems={"start"} >
+            <Flex w="38%" alignItems={"start"}>
               <Box w="100%" m="20px auto">
                 <FormControl w="100%" id="description">
                   <Flex textAlign={"center"} alignItems={"center"}>

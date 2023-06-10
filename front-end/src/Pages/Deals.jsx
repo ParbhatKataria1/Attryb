@@ -33,6 +33,7 @@ import axios_create from "../Utils/axios_instance";
 import { SearchIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
 import { useSearchParams } from "react-router-dom";
+import axios from "axios";
 
 const Deals = () => {
   axios_create.defaults.headers.common["Authorization"] =
@@ -87,7 +88,7 @@ const Deals = () => {
     }
   }
   useEffect(() => {
-    setSearchParams({...filter});
+    setSearchParams({ ...filter });
     fetchData();
   }, [page]);
 
@@ -572,6 +573,7 @@ function BasicUsage({ data, update_date }) {
   const [oemdata, set_oemdata] = useState([]);
   const [oemind, set_oemind] = useState();
   const [loading, setloading] = useState(false);
+  const [load, setload] = useState(false);
   const toast = useToast();
   const [search, setsearch] = useState("");
   function change(e) {
@@ -634,6 +636,23 @@ function BasicUsage({ data, update_date }) {
       });
     }
   }
+  async function handleUpload(e) {
+    const data = new FormData();
+    let image = e.target.files[0];
+    data.append("file", image);
+    data.append("upload_preset", "ml_default");
+    data.append("cloud_name", "dkcllnjpz");
+    console.log(e.target.files[0].name);
+    setload(true);
+    let temp = await axios.post(
+      `https://api.cloudinary.com/v1_1/dkcllnjpz/image/upload`,
+      data
+    );
+    setload(false);
+    temp = temp.data.secure_url;
+    setitem((prev) => ({ ...prev, image: temp }));
+    console.log(item);
+  }
   return (
     <>
       <Button onClick={onOpen}>Edit</Button>
@@ -650,6 +669,21 @@ function BasicUsage({ data, update_date }) {
                 <InputLeftAddon children="https://" />
                 <Input value={item.image} onChange={change} name="image" />
               </InputGroup>
+              <Box>
+                <Text textAlign={"center"} mt="10px">
+                  Or
+                </Text>
+                <Flex w="100%" my="20px">
+                  <input
+                    onChange={handleUpload}
+                    type="file"
+                    name="image"
+                    // onChange={change}
+                  />
+                  <Text ml='20px' visibility={load?'unset':'hidden'} display={'inline'}>Uploading</Text>
+                  <Spinner ml='8px' visibility={load?'unset':'hidden'}/>
+                </Flex>
+              </Box>
             </FormControl>
             <FormControl mt="10px" w="100%" id="description">
               <FormLabel>Description</FormLabel>

@@ -109,7 +109,7 @@ m=' auto'
           >
             <Text>Model: </Text>
             <Text>
-              {data.oem_spec.model ? data.oem_spec.model : "Not Mentioned"}
+              {data.model ? data.model : "Not Mentioned"}
             </Text>
           </Flex>
           <Flex
