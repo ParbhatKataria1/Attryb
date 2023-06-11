@@ -55,8 +55,8 @@ dark = '#353b45'
       navigate("/");
     } catch (error) {
       toast({
-        title: "Provide Correct Credentials",
-        description: error.message,
+        title: "Login Failed",
+        description: 'Provide Correct Credentials',
         status: "error",
         duration: 9000,
         position: "bottom-left",

@@ -53,8 +53,8 @@ const Signup = () => {
       navigate("/auth/login");
     } catch (error) {
       toast({
-        title: "Provide Correct Credentials",
-        description: error.message,
+        title: "SignUp Failed",
+        description: 'Provide Correct Credentials or User is already registered',
         status: "error",
         duration: 9000,
         position: "bottom-left",

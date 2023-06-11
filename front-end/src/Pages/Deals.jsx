@@ -112,7 +112,7 @@ const Deals = () => {
       });
     } catch (error) {
       toast({
-        title: "Not Delete",
+        title: "Failed",
         description: error.message,
         status: "error",
         duration: 9000,
@@ -456,7 +456,7 @@ function BasicUsage({ data, update_date }) {
       update_date();
       setloading(false);
       toast({
-        title: "Changes Updated",
+        title: "Done",
         description: "Changes are saved in the System",
         status: "success",
         duration: 9000,

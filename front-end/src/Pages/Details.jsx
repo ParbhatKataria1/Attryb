@@ -40,8 +40,8 @@ const Details = () => {
       setloading(false);
     } catch (error) {
       toast({
-        title: "Not able to Get The Data",
-        description: error.message,
+        title: "Failed",
+        description: 'Not able to Fetch The Data',
         status: "error",
         duration: 9000,
         position: "bottom-left",
