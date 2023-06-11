@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useContext } from 'react'
 import {
     AlertDialog,
     AlertDialogBody,
@@ -11,12 +11,14 @@ import {
     useDisclosure,
     Button,
   } from '@chakra-ui/react'
+import { LightmodeContext } from '../Context/LightMode';
 
 
 
 export default function DeleteAlert({delete_item, id}) {
     const { isOpen, onOpen, onClose } = useDisclosure()
-    const cancelRef = React.useRef()
+    const cancelRef = React.useRef();
+    const { mode, setmode, light, outline, dark } = useContext(LightmodeContext);
   
     return (
       <>
@@ -30,7 +32,7 @@ export default function DeleteAlert({delete_item, id}) {
           onClose={onClose}
         >
           <AlertDialogOverlay>
-            <AlertDialogContent>
+            <AlertDialogContent color={mode?'white':'black'} bg={mode?dark:'white'}>
               <AlertDialogHeader fontSize='lg' fontWeight='bold'>
                 Delete Item
               </AlertDialogHeader>

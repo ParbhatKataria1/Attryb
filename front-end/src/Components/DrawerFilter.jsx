@@ -18,13 +18,15 @@ import {
   useDisclosure,
   Heading,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useContext } from "react";
 import { HamburgerIcon } from "@chakra-ui/icons";
 import Filter from "./Filter";
+import { LightmodeContext } from "../Context/LightMode";
 
 export default function DrawerFilter({ item }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = React.useRef();
+  const { mode, setmode,light,outline, dark, white } = useContext(LightmodeContext)
 
   return (
     <>
@@ -39,19 +41,19 @@ export default function DrawerFilter({ item }) {
         finalFocusRef={btnRef}
       >
         <DrawerOverlay />
-        <DrawerContent>
+        <DrawerContent bg={mode?dark:'white'}>
           <Flex mt="20px">
-            <Heading ml="15px" color={"#003a5e"} textAlign={"center"}>
+            <Heading ml="15px" color={mode?white:"#003a5e"} textAlign={"center"}>
               Filteration
             </Heading>
 
-            <DrawerCloseButton mt='20px'/>
+            <DrawerCloseButton color={mode?white:"#003a5e"} mt='20px'/>
           </Flex>
 
           <Filter item={item} />
 
           <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={onClose}>
+            <Button variant="outline" mr={3} color={mode?'white':"#003a5e"} onClick={onClose}>
               Cancel
             </Button>
           </DrawerFooter>

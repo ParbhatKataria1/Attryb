@@ -28,7 +28,7 @@ import {
   InputRightAddon,
   Spinner,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import axios_create from "../Utils/axios_instance";
 import { SearchIcon } from "@chakra-ui/icons";
 import { Link } from "react-router-dom";
@@ -37,6 +37,7 @@ import axios from "axios";
 import DeleteAlert from "../Components/DeleteAlert";
 import Filter from "../Components/Filter";
 import DrawerFilter from "../Components/DrawerFilter";
+import { LightmodeContext } from "../Context/LightMode";
 
 const Deals = () => {
   axios_create.defaults.headers.common["Authorization"] =
@@ -48,6 +49,7 @@ const Deals = () => {
   const [limit, setlimit] = useState(6);
   const [length, setlength] = useState();
   let [searchParams, setSearchParams] = useSearchParams();
+  const { white, mode, setmode, light, outline, dark } = useContext(LightmodeContext);
 
   let obj = {};
   if (searchParams.get("page")) obj.page = searchParams.get("page");
@@ -125,14 +127,21 @@ const Deals = () => {
   }
   return (
     <Flex flexDir={{ base: "column", md: "row" }} w="100%" m=" auto">
-      <Flex justifyContent={'left'} ml='0px' mt='30px'   display={{ base: "block", md: "none" }}>
+      <Flex
+        justifyContent={"left"}
+        ml="0px"
+        mt="30px"
+        display={{ base: "block", md: "none" }}
+      >
         <DrawerFilter item={{ filter, setfilter, fetchData, page, limit }} />
       </Flex>
       <Box display={{ base: "none", md: "block" }}>
-        <Filter item={{ filter, setfilter, fetchData, page, limit }} />
+        <Filter
+          item={{ filter, setfilter, fetchData, page, limit, value: true }}
+        />
       </Box>
       <Box m="auto" mt="20px" w={{ base: "96%", md: "78%" }} p="20px">
-        {!loading ? null : <Spinner size="xl" />}
+        {!loading ? null : <Spinner color={mode?white:dark} size="xl" />}
         <Box w="100%">
           <Grid
             templateColumns={{
@@ -149,28 +158,42 @@ const Deals = () => {
               : data.map((el) => {
                   return (
                     <GridItem
-                      boxShadow={"rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;"}
+                      boxShadow={"rgba(0, 0, 0, 0.35) 0px 5px 15px;"}
                       borderRadius={"10px"}
-                      color={"black"}
                       key={el._id}
+                      // boxShadow={mode?'rgba(100, 100, 111, 0.2) 0px 7px 29px 0px':'none'}
                       w="100%"
-                      bg="white"
+                      bg={mode ? dark : 'white'}
+                      color={mode ? white : "black"}
                     >
-                      <Box display={{base:'block',sm:'flex', md:'block'}} alignItems={"center"}>
+                      <Box
+                        display={{ base: "block", sm: "flex", md: "block" }}
+                        alignItems={"center"}
+                      >
                         <Image
-                          w={{base:'100%',sm:'40%', md:'100%'}}
+                          w={{ base: "100%", sm: "40%", md: "100%" }}
                           h="200px"
+                          bg='white'
                           borderRadius={"10px 10px 0px 0px"}
                           objectFit={"contain"}
-                          borderBottom={"2px solid #f3efef"}
+                          borderBottom={{
+                            base: `2px solid ${mode ? outline : "#f3efef"}`,
+                            sm: "none",
+                            md: `2px solid ${mode ? outline : "#f3efef"}`,
+                          }}
                           src={el.image}
                         />
                         <Box
                           textAlign={"left"}
                           w="100%"
-                          borderRadius={"10px"}
+                          borderRadius={"0px 10px 10px 0px"}
                           fontSize={"18px"}
                           p="20px"
+                          borderLeft={{
+                            base: "none",
+                            sm: `2px solid ${mode ? outline : "#f3efef"}`,
+                            md: "none",
+                          }}
                           justifyContent={"space-between"}
                           alignContent={"space-between"}
                         >
@@ -208,7 +231,7 @@ const Deals = () => {
                             </Text>
                           </Flex>
 
-                          <Divider orientation="horizontal" />
+                          {mode ? null : <Divider orientation="horizontal" />}
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
@@ -222,7 +245,7 @@ const Deals = () => {
                             </Text>
                           </Flex>
 
-                          <Divider orientation="horizontal" />
+                          {mode ? null : <Divider orientation="horizontal" />}
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
@@ -236,7 +259,7 @@ const Deals = () => {
                             </Text>
                           </Flex>
 
-                          <Divider orientation="horizontal" />
+                          {mode ? null : <Divider orientation="horizontal" />}
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
@@ -250,7 +273,7 @@ const Deals = () => {
                             </Text>
                           </Flex>
 
-                          <Divider orientation="horizontal" />
+                          {mode ? null : <Divider orientation="horizontal" />}
                           <Flex
                             justifyContent={"space-between"}
                             alignItems={"center"}
@@ -390,6 +413,8 @@ function BasicUsage({ data, update_date }) {
   const [load, setload] = useState(false);
   const toast = useToast();
   const [search, setsearch] = useState("");
+  const { mode, setmode, light, outline, dark, white } = useContext(LightmodeContext);
+
   function change(e) {
     let name = e.target.name;
     let value = e.target.value;
@@ -473,15 +498,15 @@ function BasicUsage({ data, update_date }) {
 
       <Modal w="700px" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent>
+        <ModalContent color={mode?white:dark} bg={mode?dark:'white'}>
           <ModalHeader>Update Details </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <FormControl w="100%" id="image">
               <FormLabel>Image</FormLabel>
               <InputGroup>
-                <InputLeftAddon children="https://" />
-                <Input value={item.image} onChange={change} name="image" />
+                <InputLeftAddon color={dark} children="https://" />
+                <Input colorScheme="teal"  value={item.image} onChange={change} name="image" />
               </InputGroup>
               <Box>
                 <Text textAlign={"center"} mt="10px">
@@ -501,7 +526,7 @@ function BasicUsage({ data, update_date }) {
                   >
                     Uploading
                   </Text>
-                  <Spinner ml="8px" visibility={load ? "unset" : "hidden"} />
+                  <Spinner color={mode?white:dark} ml="8px" visibility={load ? "unset" : "hidden"} />
                 </Flex>
               </Box>
             </FormControl>
@@ -515,7 +540,7 @@ function BasicUsage({ data, update_date }) {
               </InputGroup>
             </FormControl>
             <Box
-              border={item.description.length ? "2px solid #eaeaea" : "none"}
+              border={item.description.length ? `2px solid ${mode?outline:" #eaeaea"}` : "none"}
               p={item.description.length ? "5px" : "0px"}
               borderRadius={"10px"}
               mt="10px"
@@ -529,9 +554,9 @@ function BasicUsage({ data, update_date }) {
                       justifyContent={"space-between"}
                       p="7px"
                       bg="pink.400"
-                      color="white"
+                      color={white}
                     >
-                      {el}
+                      {el.length>=20?([...el].splice(0, 20).join('')+'...'):el}
                       <span
                         onClick={() => {
                           deleteItem(ind);
@@ -552,10 +577,10 @@ function BasicUsage({ data, update_date }) {
                           stroke-miterlimit="2"
                           viewBox="0 0 24 24"
                           xmlns="http://www.w3.org/2000/svg"
-                          fill="white"
+                          fill={white}
                         >
                           <path
-                            fill="white"
+                            fill={white}
                             d="m12 10.93 5.719-5.72c.146-.146.339-.219.531-.219.404 0 .75.324.75.749 0 .193-.073.385-.219.532l-5.72 5.719 5.719 5.719c.147.147.22.339.22.531 0 .427-.349.75-.75.75-.192 0-.385-.073-.531-.219l-5.719-5.719-5.719 5.719c-.146.146-.339.219-.531.219-.401 0-.75-.323-.75-.75 0-.192.073-.384.22-.531l5.719-5.719-5.72-5.719c-.146-.147-.219-.339-.219-.532 0-.425.346-.749.75-.749.192 0 .385.073.531.219z"
                           />
                         </svg>
@@ -585,7 +610,7 @@ function BasicUsage({ data, update_date }) {
                   <option value="silver">Silver</option>
                   <option value="red">Red</option>
                   <option value="blue">Blue</option>
-                  <option value="white">White</option>
+                  <option value='white'>White</option>
                   <option value="yellow">Yellow</option>
                   <option value="black">Black</option>
                 </Select>
@@ -604,7 +629,14 @@ function BasicUsage({ data, update_date }) {
               </Flex>
             </FormControl>
             <Box>
-              <Grid mt="10px" templateColumns={{base:"repeat(1, 1fr)", sm:"repeat(2, 1fr)"}} gap={1}>
+              <Grid
+                mt="10px"
+                templateColumns={{
+                  base: "repeat(1, 1fr)",
+                  sm: "repeat(2, 1fr)",
+                }}
+                gap={1}
+              >
                 {oemdata.length &&
                   oemdata
                     .filter((el) =>
@@ -620,8 +652,8 @@ function BasicUsage({ data, update_date }) {
                           w="95%"
                           border={
                             oemind == ind
-                              ? "2px solid green"
-                              : "2px solid #eaeaea"
+                              ? "2px solid #003a5e"
+                              : `2px solid ${mode?outline:" #eaeaea"}`
                           }
                           textAlign={"left"}
                           borderRadius={"10px"}
@@ -737,8 +769,8 @@ function BasicUsage({ data, update_date }) {
                     })}
               </Grid>
             </Box>
-            <Flex justifyContent={"space-between"}>
-              <FormControl mt="10px" w="45%" id="previous_buyer">
+            <Flex flexDir={{base:'column', sm:'row'}} justifyContent={"space-between"}>
+              <FormControl mt="10px" w={{base:'100%', sm:'45%'}} id="previous_buyer">
                 <FormLabel>Previous Buyer</FormLabel>
                 <Input
                   onChange={change}
@@ -747,7 +779,7 @@ function BasicUsage({ data, update_date }) {
                   name="previous_buyer"
                 />
               </FormControl>
-              <FormControl mt="10px" w="45%" id="registration_place">
+              <FormControl mt="10px" w={{base:'100%', sm:'45%'}} id="registration_place">
                 <FormLabel>Registration Place</FormLabel>
                 <Input
                   onChange={change}
@@ -758,8 +790,8 @@ function BasicUsage({ data, update_date }) {
               </FormControl>
             </Flex>
 
-            <Flex justifyContent={"space-between"}>
-              <FormControl mt="10px" w="45%" id="reported_accident">
+            <Flex flexDir={{base:'column', sm:'row'}} justifyContent={"space-between"}>
+              <FormControl mt="10px" w={{base:'100%', sm:'45%'}} id="reported_accident">
                 <FormLabel>Reported Accident</FormLabel>
                 <Input
                   onChange={change}
@@ -768,7 +800,7 @@ function BasicUsage({ data, update_date }) {
                   name="reported_accident"
                 />
               </FormControl>
-              <FormControl mt="10px" w="45%" id="scratches">
+              <FormControl mt="10px" w={{base:'100%', sm:'45%'}} id="scratches">
                 <FormLabel>Scratches</FormLabel>
                 <Input
                   onChange={change}
@@ -784,9 +816,9 @@ function BasicUsage({ data, update_date }) {
             <Button colorScheme="blue" mr={3} onClick={onClose}>
               Close
             </Button>
-            <Button onClick={submitUpdate} variant="ghost">
+            <Button onClick={submitUpdate} colorScheme="none" color={mode?white:dark} variant="outline">
               Done{" "}
-              <Spinner visibility={loading ? "unset" : "hidden"} ml="10px" />
+              <Spinner bg='none'  color={mode?white:dark} visibility={loading ? "unset" : "hidden"}  ml="10px" />
             </Button>
           </ModalFooter>
         </ModalContent>

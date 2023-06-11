@@ -26,11 +26,12 @@ import {
   TableContainer,
   useToast,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import axios_create from "../Utils/axios_instance";
 import Slider from "react-slick";
 import AwesomeSlider from "react-awesome-slider";
 import axios from "axios";
+import { LightmodeContext } from "../Context/LightMode";
 const init = {
   image: "",
   description: [],
@@ -55,6 +56,7 @@ const AddCar = () => {
   const toast = useToast();
   const [search, setseach] = useState("");
   const [load, setload] = useState(false);
+  const { mode, setmode, light, outline, dark, white } = useContext(LightmodeContext);
   console.log(item);
   function change(e) {
     let name = e.target.name;
@@ -144,12 +146,13 @@ const AddCar = () => {
     console.log(item);
   }
   return (
-    <Box pb="20px" bg="white" color={"black"}>
+    <Box py="20px" bg={mode?dark:'white'} color={mode?"white":'black'}>
       <Box
         w="95%"
         p="20px"
         borderRadius={"10px"}
-        border={"2px solid #eaeaea"}
+        border={`1px solid ${mode?outline:'#eaeaea'}` }
+        // border='1px solid red'
         m="auto"
         py="2rem"
       >
@@ -165,7 +168,7 @@ const AddCar = () => {
                   justifyContent={"space-between"}
                 >
                   <Flex w="100%">
-                    <InputLeftAddon children="Link" />
+                    <InputLeftAddon color={'black'} children="Link" />
                     <Input value={item.image} onChange={change} name="image" />
                   </Flex>
                   <Text
@@ -196,6 +199,7 @@ const AddCar = () => {
                       <Spinner
                         ml="8px"
                         visibility={load ? "unset" : "hidden"}
+                        color={mode?white:dark}
                       />
                     </Flex>
                   </Flex>
@@ -238,14 +242,14 @@ const AddCar = () => {
               </Select>
             </FormControl>
           </Flex>
-          <Divider mt="20px" />
+          <Box border={`1px solid ${mode?outline:'#eaeaea'}`} mt="20px" />
           <Flex
             flexDir={{ base: "column", lg: "row" }}
             justifyContent={"space-between"}
           >
             <Box
               pr="20px"
-              borderRight={"1px solid #eaeaea"}
+              borderRight={`2px solid ${mode?outline:'#eaeaea'}` }
               textAlign={"left"}
               w={{ base: "100%", lg: "60%" }}
             >
@@ -262,6 +266,7 @@ const AddCar = () => {
                     mb="10px"
                     fontSize={"17px"}
                     variant={"outline"}
+                    color={mode?'white':'black'}
                   >
                     Click On A Table Row To Choose
                   </Button>
@@ -297,16 +302,17 @@ const AddCar = () => {
                     fontSize={{ base: "15px", sm: "17px" }}
                     variant={"outline"}
                     size="sm"
+                    color={mode?'white':'black'}
                     w={{ base: "100%", sm: "auto" }}
                   >
                     Click On A Table Row To Choose
                   </Button>
                 </Box>
               </Flex>
-              <TableContainer mt="15px">
-                <Table size="sm" fontSize={"23px"}>
+              <TableContainer   mt="15px">
+                <Table size="sm"  fontSize={"23px"}>
                   <Thead>
-                    <Tr>
+                    <Tr color={'white'} border={`1px solid ${mode?outline:'#eaeaea'}` }>
                       <Th>Model</Th>
                       <Th isNumeric>Year</Th>
                       <Th isNumeric>Price</Th>
@@ -337,7 +343,7 @@ const AddCar = () => {
                                 border={
                                   oemid == data._id
                                     ? "2px solid green"
-                                    : "2px solid #eaeaea"
+                                    : `2px solid ${mode?outline:'#eaeaea'}`
                                 }
                                 textAlign={"left"}
                                 borderRadius={"10px"}
@@ -391,6 +397,7 @@ const AddCar = () => {
                   xmlns="http://www.w3.org/2000/svg"
                   width={'40px'}
                   height={'40px'}
+                  fill={mode?'white':'black'}
                 >
                   <path
                     d="m13.022 14.999v3.251c0 .412.335.75.752.75.188 0 .375-.071.518-.206 1.775-1.685 4.945-4.692 6.396-6.069.2-.189.312-.452.312-.725 0-.274-.112-.536-.312-.725-1.451-1.377-4.621-4.385-6.396-6.068-.143-.136-.33-.207-.518-.207-.417 0-.752.337-.752.75v3.251h-9.02c-.531 0-1.002.47-1.002 1v3.998c0 .53.471 1 1.002 1z"
@@ -399,7 +406,7 @@ const AddCar = () => {
                 </svg>
               </Flex>
             </Box>
-            <Divider orientation="vertical" />
+            {/* <Box border={`1px solid ${mode?outline:'#eaeaea'}`}/> */}
             <Flex w={{ base: "100%", lg: "38%" }} alignItems={"start"}>
               <Box w="100%" m="auto" mt="20px">
                 <FormControl w="100%" id="description">
@@ -472,7 +479,7 @@ const AddCar = () => {
               </Box>
             </Flex>
           </Flex>
-          <Divider mt="20px" />
+          <Box mt='20px' borderTop={`1px solid ${mode?outline:'#eaeaea'}` }/>
           <Flex
             flexDir={{ base: "column", sm: "row" }}
             justifyContent={"space-between"}
@@ -568,7 +575,9 @@ const AddCar = () => {
                 color={"white"}
               >
                 Submit{" "}
-                <Spinner visibility={loading ? "unset" : "hidden"} ml="10px" />
+                <Spinner  
+                visibility={loading ? "unset" : "hidden"}
+                 ml="10px" />
               </Button>
             </Box>
           </Flex>

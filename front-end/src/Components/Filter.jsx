@@ -9,10 +9,14 @@ import {
   Select,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useContext } from "react";
+import { LightmodeContext } from "../Context/LightMode";
 
 const Filter = ({ item }) => {
-  const { filter, setfilter, fetchData, page, limit } = item;
+  const { filter, setfilter, fetchData, page, limit, value } = item;
+  
+  const { mode, setmode,light,outline, dark , white} = useContext(LightmodeContext)
+  
   function outter(timer) {
     let id;
     return function (e) {
@@ -36,25 +40,27 @@ const Filter = ({ item }) => {
 
   return (
     <Box
+    borderRight={ value?`1px solid ${mode?outline:'#eaeaea'}`:'none'}
       position={"sticky"}
       top="10vh"
       h={"100vh"}
       w="300px"
       p="20px"
       pt="3rem"
-      bg="white"
+      bg={mode?dark:'white'}
       justifyContent={"space-between"}
       alignItems={"center"}
+
     >
       <InputGroup>
         <Input
-          color={"black"}
+          color={mode?white:'dark'}
           onChange={debounce_search}
           name="model"
           type="search"
         />
         <InputRightElement h={"full"}>
-          <Button variant={"ghost"}>
+          <Button bg='white' variant={"ghost"}>
             <SearchIcon />
           </Button>
         </InputRightElement>
@@ -63,7 +69,7 @@ const Filter = ({ item }) => {
         mt="30px"
         justifyContent={"space-between"}
         alignItems={"center"}
-        color="#003a5e"
+        color={mode?'gray.50':'#003a5e'}
       >
         <Flex justifyContent={"space-between"} alignItems={"center"}>
           <Text
@@ -75,9 +81,9 @@ const Filter = ({ item }) => {
             Min Price :
           </Text>
           <Input
-            value={filter?.min_price || 0}
+            value={filter?.min_price || null}
             w="100px"
-            placeholder="-1"
+            placeholder="Enter"
             outline={"#003a5e"}
             onChange={(e) => {
               setfilter((prev) => {
@@ -96,14 +102,14 @@ const Filter = ({ item }) => {
             Max Price :
           </Text>
           <Input
-            value={filter?.max_price || 0}
+            value={filter?.max_price || null}
             onChange={(e) => {
               setfilter((prev) => {
                 return { ...prev, max_price: +e.target.value };
               });
             }}
             w="100px"
-            placeholder="-1"
+            placeholder="Enter"
           ></Input>
         </Flex>
       </Box>
@@ -112,7 +118,7 @@ const Filter = ({ item }) => {
         mt="30px"
         justifyContent={"space-between"}
         alignItems={"center"}
-        color="#003a5e"
+        color={mode?white:'#003a5e'}
       >
         <Flex justifyContent={"space-between"} alignItems={"center"}>
           <Text
@@ -124,7 +130,7 @@ const Filter = ({ item }) => {
             Min Mileage :
           </Text>
           <Input
-            value={filter?.min_mileage || 0}
+            value={filter?.min_mileage || null}
             onChange={(e) => {
               setfilter((prev) => {
                 return {
@@ -134,7 +140,7 @@ const Filter = ({ item }) => {
               });
             }}
             w="100px"
-            placeholder="-1"
+            placeholder="Enter"
             outline={"#003a5e"}
           ></Input>
         </Flex>
@@ -148,7 +154,7 @@ const Filter = ({ item }) => {
             Max Mileage :
           </Text>
           <Input
-            value={filter?.max_mileage || 0}
+            value={filter?.max_mileage || null}
             onChange={(e) => {
               setfilter((prev) => {
                 return {
@@ -158,7 +164,7 @@ const Filter = ({ item }) => {
               });
             }}
             w="100px"
-            placeholder="-1"
+            placeholder="Enter"
           ></Input>
         </Flex>
       </Box>
@@ -167,8 +173,7 @@ const Filter = ({ item }) => {
         mt="30px"
         value={filter?.color}
         fontWeight={"bold"}
-        colorScheme="white"
-        color={"#003a5e"}
+        color={mode?'gray':'#003a5e'}
         w="100%"
         placeholder="Choose Color"
         onChange={(e) => {
@@ -183,13 +188,13 @@ const Filter = ({ item }) => {
         <option value="yellow">Yellow</option>
         <option value="red">Red</option>
         <option value="blue">Blue</option>
-        <option value="white">White</option>
+        <option value='white'>White</option>
       </Select>
       <Button
-        color="white"
+        color={white}
         mt="20px"
         bg="#003a5e"
-        colorScheme="blue"
+        colorScheme={mode?'white':'white'}
         w="100%"
         onClick={(e) => {
           setfilter({});

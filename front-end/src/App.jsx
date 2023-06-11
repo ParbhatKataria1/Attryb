@@ -3,10 +3,13 @@ import './App.css';
 import Navbar from './Components/Navbar';
 import AllRoutes from './Components/AllRoutes';
 import { Box } from '@chakra-ui/react';
+import { useContext } from 'react';
+import { LightmodeContext } from './Context/LightMode';
 
 function App() {
+  const { mode, setmode, light, outline, dark } = useContext(LightmodeContext);
   return (
-    <Box className="App"  >
+    <Box  bg={mode?dark:'white'} className="App">
       <Navbar/>
       <AllRoutes/>
     </Box>

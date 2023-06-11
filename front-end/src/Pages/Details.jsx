@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -20,12 +20,14 @@ import {
 } from "@chakra-ui/react";
 import { Link, useParams } from "react-router-dom";
 import axios_create from "../Utils/axios_instance";
+import { LightmodeContext } from "../Context/LightMode";
 
 const Details = () => {
   const { id } = useParams();
   const [data, setdata] = useState([]);
   const [loading, setloading] = useState(false);
   const toast = useToast();
+  const { mode, setmode, light, outline, dark } = useContext(LightmodeContext);
 
   async function fetchData() {
     axios_create.defaults.headers.common["Authorization"] =
@@ -64,8 +66,8 @@ const Details = () => {
     );
   }
   return (
-    <Box pb="20px" bg="white" minH="90vh">
-      <Box pt='20px'>
+    <Box pb="20px" bg={mode ? dark : "white"} minH="90vh">
+      <Box pt="20px">
         <Heading
           textTransform={"uppercase"}
           color={"blue.900"}
@@ -74,25 +76,44 @@ const Details = () => {
           p={2}
           alignSelf={"flex-start"}
           rounded={"md"}
-          w='270px'
+          w="270px"
           fontSize={"25px"}
           m=" auto"
         >
           All Details
         </Heading>
-      </Box>  
-      <Flex flexDir={{base:'column', lg:'row'}} w="95%" m="2rem auto" bg="white" color="black">
-        <Image  w={{base:'95%', lg:"60%"}} m='auto' h="350px" objectFit={"contain"} src={data.image} />
+      </Box>
+      <Flex
+        flexDir={{ base: "column", lg: "row" }}
+        w="95%"
+        m="2rem auto"
+        color={mode ? "white" : "black"}
+        justifyContent={'space-between'}
+        alignItems={{base:'center', lg:'start'}}
+      >
+        <Box borderRadius={"10px"} w={{ base: "95%", lg: "50%" }} bg='white'>
+          <Image
+            // w="100%"
+            m="auto"
+            h="350px"
+            display={'inline-flex'}
+            justifyContent={'center'}
+            objectFit={'contain'}
+            src={data.image}
+            borderRadius={"10px"}
+          />
+        </Box>
         <Box
           border={"2px solid #eaeaea"}
           textAlign={"left"}
-          w={{base:'95%', lg:"60%"}}
-          m='auto'
+          w={{ base: "95%", lg: "40%" }}
+          m="auto"
           borderRadius={"10px"}
           fontSize={"19px"}
           p="20px"
           justifyContent={"space-between"}
           alignContent={"space-between"}
+          mt={{base:"20px", lg:'0px'}}
         >
           <Flex
             justifyContent={"space-between"}
@@ -100,9 +121,7 @@ const Details = () => {
             fontWeight={"bolder"}
           >
             <Text>Title : </Text>
-            <Text>
-              {data.title ? data.title : "Not Mentioned"}
-            </Text>
+            <Text>{data.title ? data.title : "Not Mentioned"}</Text>
           </Flex>
           <Flex
             fontSize={"19px"}
@@ -110,7 +129,9 @@ const Details = () => {
             alignItems={"center"}
           >
             <Text>Model: </Text>
-            <Text>{data.oem_spec.model ? data.oem_spec.model : "Not Mentioned"}</Text>
+            <Text>
+              {data.oem_spec.model ? data.oem_spec.model : "Not Mentioned"}
+            </Text>
           </Flex>
           <Flex
             justifyContent={"space-between"}
@@ -124,7 +145,7 @@ const Details = () => {
             </Text>
           </Flex>
 
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -138,7 +159,7 @@ const Details = () => {
             </Text>
           </Flex>
 
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -152,7 +173,7 @@ const Details = () => {
             </Text>
           </Flex>
 
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -166,7 +187,7 @@ const Details = () => {
             </Text>
           </Flex>
 
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -212,7 +233,7 @@ const Details = () => {
             <Text>Reported Accidents</Text>
             <Text>{data.reported_accident || 0}</Text>
           </Flex>
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -221,7 +242,7 @@ const Details = () => {
             <Text>Scratches</Text>
             <Text>{data.scratches || 0}</Text>
           </Flex>
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -230,7 +251,7 @@ const Details = () => {
             <Text>Previous Buyer</Text>
             <Text>{data.previous_buyer || 0}</Text>
           </Flex>
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -247,7 +268,7 @@ const Details = () => {
               border="2px solid lightgray"
             ></Box>
           </Flex>
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -256,7 +277,7 @@ const Details = () => {
             <Text>Odometer</Text>
             <Text>{data.odometer || 0} Km/h</Text>
           </Flex>
-          <Divider orientation="horizontal" />
+          {mode?null:<Divider orientation="horizontal" />}
           <Flex
             justifyContent={"space-between"}
             alignItems={"center"}
@@ -266,9 +287,9 @@ const Details = () => {
             <Text>{data.registration_place || 0}</Text>
           </Flex>
 
-          <Box mt="20px" fontSize={"17px"} color={"black"}>
+          <Box  mt="20px" fontSize={"17px"} >
             <Text fontSize={"19px"}>Description</Text>
-            <UnorderedList mt="8px">
+            <UnorderedList  mt="8px">
               {data.description.map((el, ind) => {
                 return <ListItem key={ind}>{el}</ListItem>;
               })}
