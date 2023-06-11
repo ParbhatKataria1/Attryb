@@ -32,7 +32,6 @@ const Filter = ({ item }) => {
   function updateSeach(e) {
     let name = e.target.name;
     let value = e.target.value;
-    console.log(value)
     setfilter((prev) => ({ ...prev, [name]: value }));
   }
 

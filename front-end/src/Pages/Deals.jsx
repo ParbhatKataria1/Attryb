@@ -71,7 +71,6 @@ const Deals = () => {
 
   async function fetchData(data = null) {
     setloading(true);
-    console.log(filter, searchParams.get("model"));
     try {
       let item = await axios_create.get("/inventory", {
         params: data ? { ...data, limit } : { ...filter, limit },

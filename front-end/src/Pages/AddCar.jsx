@@ -57,7 +57,6 @@ const AddCar = () => {
   const [search, setseach] = useState("");
   const [load, setload] = useState(false);
   const { mode, setmode, light, outline, dark, white } = useContext(LightmodeContext);
-  console.log(item);
   function change(e) {
     let name = e.target.name;
     let value = e.target.value;
@@ -82,7 +81,6 @@ const AddCar = () => {
   async function fetch_oem() {
     let data = await axios_create.get("/oem");
     data = data.data;
-    console.log(data);
     set_oemdata(data);
   }
 
@@ -134,7 +132,6 @@ const AddCar = () => {
     data.append("file", image);
     data.append("upload_preset", "ml_default");
     data.append("cloud_name", "dkcllnjpz");
-    console.log(e.target.files[0].name);
     setload(true);
     let temp = await axios.post(
       `https://api.cloudinary.com/v1_1/dkcllnjpz/image/upload`,
@@ -143,7 +140,6 @@ const AddCar = () => {
     setload(false);
     temp = temp.data.secure_url;
     setitem((prev) => ({ ...prev, image: temp }));
-    console.log(item);
   }
   return (
     <Box py="20px" bg={mode?dark:'white'} color={mode?"white":'black'}>

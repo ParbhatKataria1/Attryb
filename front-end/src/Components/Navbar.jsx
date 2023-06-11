@@ -30,7 +30,6 @@ import { LightmodeContext } from "../Context/LightMode";
 const Navbar = () => {
   const navigate = useNavigate();
   const { mode, setmode, dark, light, outline } = useContext(LightmodeContext);
-  console.log(outline, 'this is me')
   return (
     <Box
       borderBottom={mode?`2px solid ${outline}`:"2px solid #eaeaea"}
