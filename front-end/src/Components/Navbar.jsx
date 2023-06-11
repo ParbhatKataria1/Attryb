@@ -12,9 +12,18 @@ import {
   AlertDialogOverlay,
   AlertDialogCloseButton,
   useDisclosure,
+  Drawer,
+  DrawerBody,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  Heading,
 } from "@chakra-ui/react";
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { HamburgerIcon } from "@chakra-ui/icons";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -55,55 +64,156 @@ const Navbar = () => {
             BuyCar
           </Text>
         </Flex>
-        <Flex w="28%" alignItems={"center"} justifyContent={"flex-end"}>
-          <Link to="/">
-            <Button
-              mx="10px"
-              bg={"red.500"}
-              _hover={{
-                bg: "red.300",
-              }}
-              color={"white"}
-            >
-              Home
-            </Button>
-          </Link>
-          <Link to="/addcar">
-            <Button mx="10px">Add Car</Button>
-          </Link>
-          {!sessionStorage.getItem("username") ? null : (
-            <Flex
-              mx="10px"
-              justifyContent={"start"}
-              color="white"
-              alignItems={"center"}
-              h="38px"
-              bg="gray"
-              borderRadius={"6px"}
-              p="9px"
-              cursor={"no-drop"}
-            >
-              {sessionStorage.getItem("username").toUpperCase()}
-            </Flex>
-          )}
-          <Flex
-            mx="10px"
-            justifyContent={"center"}
-            borderRadius={"50%"}
-            w="37px"
-            h="37px"
-            alignItems={"center"}
-            cursor={"pointer"}
-            heading="logout"
-           
-          >
-            <AlertDialogExample/>
-          </Flex>
-        </Flex>
+        <Box display={{ base: "none", md: "block" }}>
+          <LoginOption />
+        </Box>
+        <Box display={{ base: "block", md: "none" }}>
+          <DrawerLogin />
+        </Box>
       </Flex>
     </Box>
   );
 };
+
+function DrawerLogin() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = React.useRef();
+
+  return (
+    <>
+      <Button ref={btnRef} color="white" bg="#003a5e" onClick={onOpen}>
+        <HamburgerIcon />
+      </Button>
+      <Drawer
+        isOpen={isOpen}
+        placement="right"
+        onClose={onClose}
+        finalFocusRef={btnRef}
+      >
+        <DrawerOverlay />
+        <DrawerContent>
+          <DrawerCloseButton />
+          <Box w="100%"  m="auto" mt="50px">
+            <Flex
+              flexDirection={"column"}
+              w="95%"
+              m={"auto"}
+              alignItems={"center"}
+              justifyContent={"flex-end"}
+            >
+              <Link w="250px" to="/">
+                <Button
+                  w="250px"
+                  mt="20px"
+                  mx="10px"
+                  bg={"red.500"}
+                  _hover={{
+                    bg: "red.300",
+                  }}
+                  color={"white"}
+                >
+                  Home
+                </Button>
+              </Link>
+              <Link to="/addcar">
+                <Button w="250px" bg='gray' color={'white'} colorScheme="white" mt="20px" mx="10px">
+                  Add Car
+                </Button>
+              </Link>
+              {!sessionStorage.getItem("username") ? null : (
+                <Flex
+                  mx="10px"
+                  justifyContent={"center"}
+                  color="white"
+                  alignItems={"center"}
+                  textAlign={'center'}
+                  h="38px"
+                  bg="gray"
+                  borderRadius={"6px"}
+                  p="9px"
+                  cursor={"no-drop"}
+                  w="250px"
+                  mt="20px"
+                >
+                  {sessionStorage.getItem("username").toUpperCase()}
+                </Flex>
+              )}
+              <Flex
+                mx="10px"
+                justifyContent={"center"}
+                borderRadius={"50%"}
+                w="37px"
+                h="37px"
+                alignItems={"center"}
+                cursor={"pointer"}
+                heading="logout"
+                mt="20px"
+              >
+                <AlertDialogExample />
+                <Text ml={'10px'}>Logout</Text>
+              </Flex>
+            </Flex>
+          </Box>
+
+          <DrawerFooter>
+            <Button variant="outline" mr={3} onClick={onClose}>
+              Cancel
+            </Button>
+          </DrawerFooter>
+        </DrawerContent>
+      </Drawer>
+    </>
+  );
+}
+
+function LoginOption() {
+  return (
+    <Flex alignItems={"center"} justifyContent={"flex-end"}>
+      <Link to="/">
+        <Button
+          mx="10px"
+          bg={"red.500"}
+          _hover={{
+            bg: "red.300",
+          }}
+          color={"white"}
+        >
+          Home
+        </Button>
+      </Link>
+      <Link to="/addcar">
+        <Button mx="10px">Add Car</Button>
+      </Link>
+      {!sessionStorage.getItem("username") ? null : (
+        <Flex
+          mx="10px"
+          justifyContent={"start"}
+          color="white"
+          alignItems={"center"}
+          h="38px"
+          bg="gray"
+          borderRadius={"6px"}
+          p="9px"
+          cursor={"no-drop"}
+        >
+          {sessionStorage.getItem("username").toUpperCase()}
+        </Flex>
+      )}
+      <Flex
+        mx="10px"
+        justifyContent={"center"}
+        borderRadius={"50%"}
+        w="37px"
+        h="37px"
+        alignItems={"center"}
+        cursor={"pointer"}
+        heading="logout"
+      >
+        <AlertDialogExample />
+      </Flex>
+    </Flex>
+  );
+}
 
 export default Navbar;
 
@@ -133,22 +243,24 @@ function AlertDialogExample() {
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Log Out 
+              Log Out
             </AlertDialogHeader>
 
-            <AlertDialogBody>
-              Are you sure you want to logout?
-            </AlertDialogBody>
+            <AlertDialogBody>Are you sure you want to logout?</AlertDialogBody>
 
             <AlertDialogFooter>
               <Button ref={cancelRef} onClick={onClose}>
                 Cancel
               </Button>
-              <Button colorScheme="red" onClick={()=>{
+              <Button
+                colorScheme="red"
+                onClick={() => {
                   sessionStorage.clear();
                   navigate("/auth/login");
                   onClose();
-              }} ml={3}>
+                }}
+                ml={3}
+              >
                 Logout
               </Button>
             </AlertDialogFooter>

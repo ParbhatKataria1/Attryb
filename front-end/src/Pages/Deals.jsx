@@ -36,6 +36,7 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import DeleteAlert from "../Components/DeleteAlert";
 import Filter from "../Components/Filter";
+import DrawerFilter from "../Components/DrawerFilter";
 
 const Deals = () => {
   axios_create.defaults.headers.common["Authorization"] =
@@ -68,7 +69,7 @@ const Deals = () => {
 
   async function fetchData(data = null) {
     setloading(true);
-    console.log(filter, searchParams.get('model'))
+    console.log(filter, searchParams.get("model"));
     try {
       let item = await axios_create.get("/inventory", {
         params: data ? { ...data, limit } : { ...filter, limit },
@@ -123,12 +124,26 @@ const Deals = () => {
     fetchData();
   }
   return (
-    <Flex w="100%" m=" auto">
-      <Filter item = {{filter,setfilter,fetchData, page, limit}} />
-      <Box m="auto" mt="20px" w="78%" p="20px">
+    <Flex flexDir={{ base: "column", md: "row" }} w="100%" m=" auto">
+      <Flex justifyContent={'left'} ml='0px' mt='30px'   display={{ base: "block", md: "none" }}>
+        <DrawerFilter item={{ filter, setfilter, fetchData, page, limit }} />
+      </Flex>
+      <Box display={{ base: "none", md: "block" }}>
+        <Filter item={{ filter, setfilter, fetchData, page, limit }} />
+      </Box>
+      <Box m="auto" mt="20px" w={{ base: "96%", md: "78%" }} p="20px">
         {!loading ? null : <Spinner size="xl" />}
         <Box w="100%">
-          <Grid templateColumns={{base:"repeat(1, 1fr)",sm:"repeat(2, 1fr)",md:"repeat(1, 1fr)", lg:"repeat(2, 1fr)", xl:"repeat(3, 1fr)"}} gap={6}>
+          <Grid
+            templateColumns={{
+              base: "repeat(1, 1fr)",
+              sm: "repeat(1, 1fr)",
+              md: "repeat(1, 1fr)",
+              lg: "repeat(2, 1fr)",
+              xl: "repeat(3, 1fr)",
+            }}
+            gap={6}
+          >
             {!data.length
               ? null
               : data.map((el) => {
@@ -141,9 +156,9 @@ const Deals = () => {
                       w="100%"
                       bg="white"
                     >
-                      <Box alignItems={"center"}>
+                      <Box display={{base:'block',sm:'flex', md:'block'}} alignItems={"center"}>
                         <Image
-                          w="100%"
+                          w={{base:'100%',sm:'40%', md:'100%'}}
                           h="200px"
                           borderRadius={"10px 10px 0px 0px"}
                           objectFit={"contain"}
@@ -275,15 +290,22 @@ const Deals = () => {
                               })}
                             </Flex>
                           </Flex>
-                          <Flex mt="10px" fontSize={'1em'} justifyContent={"space-between"}>
+                          <Flex
+                            mt="10px"
+                            fontSize={"1em"}
+                            justifyContent={"space-between"}
+                          >
                             <Link to={`/${el._id}`}>
-                              <Button size={'sm'}>More Details</Button>
+                              <Button size={"sm"}>More Details</Button>
                             </Link>
                             {userid == el.dealer._id && (
                               <BasicUsage data={el} update_date={update_date} />
                             )}
                             {userid == el.dealer._id && (
-                              <DeleteAlert delete_item={delete_item} id={el._id} />
+                              <DeleteAlert
+                                delete_item={delete_item}
+                                id={el._id}
+                              />
                             )}
                           </Flex>
                         </Box>
@@ -434,7 +456,6 @@ function BasicUsage({ data, update_date }) {
     data.append("file", image);
     data.append("upload_preset", "ml_default");
     data.append("cloud_name", "dkcllnjpz");
-    console.log(e.target.files[0].name);
     setload(true);
     let temp = await axios.post(
       `https://api.cloudinary.com/v1_1/dkcllnjpz/image/upload`,
@@ -443,11 +464,12 @@ function BasicUsage({ data, update_date }) {
     setload(false);
     temp = temp.data.secure_url;
     setitem((prev) => ({ ...prev, image: temp }));
-    console.log(item);
   }
   return (
     <>
-      <Button size={'sm'} onClick={onOpen}>Edit</Button>
+      <Button size={"sm"} onClick={onOpen}>
+        Edit
+      </Button>
 
       <Modal w="700px" isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -472,8 +494,14 @@ function BasicUsage({ data, update_date }) {
                     name="image"
                     // onChange={change}
                   />
-                  <Text ml='20px' visibility={load?'unset':'hidden'} display={'inline'}>Uploading</Text>
-                  <Spinner ml='8px' visibility={load?'unset':'hidden'}/>
+                  <Text
+                    ml="20px"
+                    visibility={load ? "unset" : "hidden"}
+                    display={"inline"}
+                  >
+                    Uploading
+                  </Text>
+                  <Spinner ml="8px" visibility={load ? "unset" : "hidden"} />
                 </Flex>
               </Box>
             </FormControl>
@@ -576,7 +604,7 @@ function BasicUsage({ data, update_date }) {
               </Flex>
             </FormControl>
             <Box>
-              <Grid mt="10px" templateColumns="repeat(2, 1fr)" gap={1}>
+              <Grid mt="10px" templateColumns={{base:"repeat(1, 1fr)", sm:"repeat(2, 1fr)"}} gap={1}>
                 {oemdata.length &&
                   oemdata
                     .filter((el) =>

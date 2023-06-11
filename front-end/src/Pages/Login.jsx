@@ -65,13 +65,13 @@ const Login = () => {
   }
 
   return (
-    <Box w="35%" m="5rem auto" bg="#282c34">
+    <Box w={{base:'90%', md:'70%',lg:"50%", xl:"35%"}} m="3rem auto" bg="#282c34">
       <Heading fontSize={"2rem"}>
         Please Enter Your Credentials to Login✌️
         <Flex
           alignItems={"center"}
           justifyContent={"center"}
-          mt="28px"
+          mt="15px"
           fontSize={"1.3rem"}
           visibility={loading ? "unset" : "hidden"}
         >

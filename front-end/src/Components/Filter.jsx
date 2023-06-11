@@ -192,18 +192,6 @@ const Filter = ({ item }) => {
         colorScheme="blue"
         w="100%"
         onClick={(e) => {
-          fetchData();
-        }}
-      >
-        Apply Filters
-      </Button>
-      <Button
-        color="white"
-        mt="20px"
-        bg="#003a5e"
-        colorScheme="blue"
-        w="100%"
-        onClick={(e) => {
           setfilter({});
           fetchData({});
         }}

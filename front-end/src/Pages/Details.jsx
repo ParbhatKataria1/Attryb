@@ -48,7 +48,6 @@ const Details = () => {
       setloading(false);
     }
   }
-  console.log(data);
   useEffect(() => {
     fetchData();
   }, []);
@@ -66,28 +65,31 @@ const Details = () => {
   }
   return (
     <Box pb="20px" bg="white" minH="90vh">
-      <Heading
-        textTransform={"uppercase"}
-        color={"blue.900"}
-        fontWeight={600}
-        bg="blue.50"
-        p={2}
-        alignSelf={"flex-start"}
-        rounded={"md"}
-        w='20%'
-fontSize={'25px'}
-m=' auto'
-      >
-        All Details
-      </Heading>
-      <Flex w="95%" m="2rem auto" bg="white" color="black">
-        <Image w="60%" h="350px" objectFit={"contain"} src={data.image} />
+      <Box pt='20px'>
+        <Heading
+          textTransform={"uppercase"}
+          color={"blue.900"}
+          fontWeight={600}
+          bg="blue.50"
+          p={2}
+          alignSelf={"flex-start"}
+          rounded={"md"}
+          w='270px'
+          fontSize={"25px"}
+          m=" auto"
+        >
+          All Details
+        </Heading>
+      </Box>  
+      <Flex flexDir={{base:'column', lg:'row'}} w="95%" m="2rem auto" bg="white" color="black">
+        <Image  w={{base:'95%', lg:"60%"}} m='auto' h="350px" objectFit={"contain"} src={data.image} />
         <Box
           border={"2px solid #eaeaea"}
           textAlign={"left"}
-          w="60%"
+          w={{base:'95%', lg:"60%"}}
+          m='auto'
           borderRadius={"10px"}
-          fontSize={"21px"}
+          fontSize={"19px"}
           p="20px"
           justifyContent={"space-between"}
           alignContent={"space-between"}
@@ -99,7 +101,7 @@ m=' auto'
           >
             <Text>Title : </Text>
             <Text>
-              {data.oem_spec.title ? data.oem_spec.title : "Not Mentioned"}
+              {data.title ? data.title : "Not Mentioned"}
             </Text>
           </Flex>
           <Flex
@@ -108,9 +110,7 @@ m=' auto'
             alignItems={"center"}
           >
             <Text>Model: </Text>
-            <Text>
-              {data.model ? data.model : "Not Mentioned"}
-            </Text>
+            <Text>{data.oem_spec.model ? data.oem_spec.model : "Not Mentioned"}</Text>
           </Flex>
           <Flex
             justifyContent={"space-between"}

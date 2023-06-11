@@ -158,31 +158,56 @@ const AddCar = () => {
             <FormControl w="100%" id="image">
               <FormLabel>Image</FormLabel>
               <InputGroup>
-                <Flex alignItems={"center"} justifyContent={"space-between"}>
-                  <InputLeftAddon children="Link" />
-                  <Input value={item.image} onChange={change} name="image" />
-                  <Text mx="10px">Or</Text>
-                  <Flex w="100%" my="20px">
+                <Flex
+                  w="100%"
+                  flexDir={{ base: "column", md: "row" }}
+                  alignItems={{ base: "left", md: "center" }}
+                  justifyContent={"space-between"}
+                >
+                  <Flex w="100%">
+                    <InputLeftAddon children="Link" />
+                    <Input value={item.image} onChange={change} name="image" />
+                  </Flex>
+                  <Text
+                    mt={{ base: "1rem", md: "0px" }}
+                    mx={{ base: "0px", md: "10px" }}
+                  >
+                    Or
+                  </Text>
+                  <Flex
+                    alignItems={{ base: "start", sm: "center" }}
+                    flexDir={{ base: "column", sm: "row" }}
+                    w="100%"
+                    my="20px"
+                  >
                     <input
                       onChange={handleUpload}
                       type="file"
                       name="image"
                       // onChange={change}
                     />
-                    <Text
-                      visibility={load ? "unset" : "hidden"}
-                      display={"inline"}
-                    >
-                      Uploading
-                    </Text>
-                    <Spinner ml="8px" visibility={load ? "unset" : "hidden"} />
+                    <Flex mt={{ base: "15px", sm: "0px" }}>
+                      <Text
+                        visibility={load ? "unset" : "hidden"}
+                        display={"inline"}
+                      >
+                        Uploading
+                      </Text>
+                      <Spinner
+                        ml="8px"
+                        visibility={load ? "unset" : "hidden"}
+                      />
+                    </Flex>
                   </Flex>
                 </Flex>
               </InputGroup>
             </FormControl>
           </Flex>
-          <Flex justifyContent={"space-between"}>
-            <FormControl mt="10px" w="45%" id="title">
+          <Flex
+            flexDir={{ base: "column", sm: "row" }}
+            justifyContent={"space-between"}
+          >
+            <FormControl mt="10px" w={{ base: "100%", sm: "45%" }} id="title">
               <FormLabel>Title</FormLabel>
               <Input
                 type="text"
@@ -192,7 +217,11 @@ const AddCar = () => {
               />
             </FormControl>
 
-            <FormControl mt="10px" w="45%" id="original_paint">
+            <FormControl
+              mt="10px"
+              w={{ base: "100%", sm: "45%" }}
+              id="original_paint"
+            >
               <FormLabel>Original Paint</FormLabel>
               <Select
                 onChange={change}
@@ -210,29 +239,47 @@ const AddCar = () => {
             </FormControl>
           </Flex>
           <Divider mt="20px" />
-          <Flex justifyContent={"space-between"}>
+          <Flex
+            flexDir={{ base: "column", lg: "row" }}
+            justifyContent={"space-between"}
+          >
             <Box
               pr="20px"
               borderRight={"1px solid #eaeaea"}
               textAlign={"left"}
-              w="60%"
+              w={{ base: "100%", lg: "60%" }}
             >
-              <Flex justifyContent={"space-between"}>
-                <Button
-                  textAlign={"left"}
-                  fontWeight={"semibold"}
-                  cursor={"no-drop"}
+              <Flex
+                flexDir={{ base: "column", lg: "row" }}
+                justifyContent={"space-between"}
+              >
+                <Box display={{ base: "none", lg: "block" }}>
+                  <Button
+                    textAlign={"left"}
+                    fontWeight={"semibold"}
+                    cursor={"no-drop"}
+                    mt="20px"
+                    mb="10px"
+                    fontSize={"17px"}
+                    variant={"outline"}
+                  >
+                    Click On A Table Row To Choose
+                  </Button>
+                </Box>
+                <FormControl
                   mt="20px"
-                  mb="10px"
-                  fontSize={"17px"}
+                  mb={{ base: "10px", lg: "0px" }}
+                  w={{ base: "100%", lg: "60%" }}
+                  id="oem_spec"
                 >
-                  Click On A Table Row To Choose
-                </Button>
-                <FormControl mt="20px" w="60%" id="oem_spec">
-                  <Flex justifyContent={"end"} alignItems={"center"}>
+                  <Flex
+                    flexDir={{ base: "column", lg: "row" }}
+                    justifyContent={{ base: "center", lg: "end" }}
+                    alignItems={{ base: "left", lg: "center" }}
+                  >
                     <FormLabel>Filter Oem Spec</FormLabel>
                     <Input
-                      w="40%"
+                      w={{ base: "100%", lg: "40%" }}
                       placeholder="Search OEM"
                       onChange={(e) => {
                         setseach(e.target.value);
@@ -240,8 +287,23 @@ const AddCar = () => {
                     ></Input>
                   </Flex>
                 </FormControl>
+                <Box display={{ base: "block", lg: "none" }}>
+                  <Button
+                    textAlign={"left"}
+                    fontWeight={"semibold"}
+                    cursor={"no-drop"}
+                    mt="20px"
+                    mb="10px"
+                    fontSize={{ base: "15px", sm: "17px" }}
+                    variant={"outline"}
+                    size="sm"
+                    w={{ base: "100%", sm: "auto" }}
+                  >
+                    Click On A Table Row To Choose
+                  </Button>
+                </Box>
               </Flex>
-              <TableContainer>
+              <TableContainer mt="15px">
                 <Table size="sm" fontSize={"23px"}>
                   <Thead>
                     <Tr>
@@ -316,12 +378,35 @@ const AddCar = () => {
                   </Tbody>
                 </Table>
               </TableContainer>
+              <Flex display={{base:'flex', md:'none'}} alignItems={"center"} mt="10px" justifyContent={"center"}>
+                <Text fontSize={"17px"} fontWeight={"semibold"} mr="10px">
+                  Swipe Right
+                </Text>
+                <svg
+                  clip-rule="evenodd"
+                  fill-rule="evenodd"
+                  stroke-linejoin="round"
+                  stroke-miterlimit="2"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width={'40px'}
+                  height={'40px'}
+                >
+                  <path
+                    d="m13.022 14.999v3.251c0 .412.335.75.752.75.188 0 .375-.071.518-.206 1.775-1.685 4.945-4.692 6.396-6.069.2-.189.312-.452.312-.725 0-.274-.112-.536-.312-.725-1.451-1.377-4.621-4.385-6.396-6.068-.143-.136-.33-.207-.518-.207-.417 0-.752.337-.752.75v3.251h-9.02c-.531 0-1.002.47-1.002 1v3.998c0 .53.471 1 1.002 1z"
+                    fill-rule="nonzero"
+                  />
+                </svg>
+              </Flex>
             </Box>
             <Divider orientation="vertical" />
-            <Flex w="38%" alignItems={"start"}>
-              <Box w="100%" m="20px auto">
+            <Flex w={{ base: "100%", lg: "38%" }} alignItems={"start"}>
+              <Box w="100%" m="auto" mt="20px">
                 <FormControl w="100%" id="description">
-                  <Flex textAlign={"center"} alignItems={"center"}>
+                  <Flex
+                    flexDir={{ base: "column", sm: "row" }}
+                    alignItems={{ base: "start", sm: "center" }}
+                  >
                     <FormLabel fontSize={"17px"}>Description</FormLabel>
                     <InputGroup>
                       <Input ref={inputRef} name="description" />
@@ -388,8 +473,15 @@ const AddCar = () => {
             </Flex>
           </Flex>
           <Divider mt="20px" />
-          <Flex justifyContent={"space-between"}>
-            <FormControl mt="20px" w="45%" id="previous_buyer">
+          <Flex
+            flexDir={{ base: "column", sm: "row" }}
+            justifyContent={"space-between"}
+          >
+            <FormControl
+              mt="20px"
+              w={{ base: "100%", sm: "45%" }}
+              id="previous_buyer"
+            >
               <FormLabel>Previous Buyer</FormLabel>
               <Input
                 onChange={change}
@@ -398,7 +490,11 @@ const AddCar = () => {
                 name="previous_buyer"
               />
             </FormControl>
-            <FormControl mt="20px" w="45%" id="registration_place">
+            <FormControl
+              mt="20px"
+              w={{ base: "100%", sm: "45%" }}
+              id="registration_place"
+            >
               <FormLabel>Registration Place</FormLabel>
               <Input
                 onChange={change}
@@ -408,8 +504,15 @@ const AddCar = () => {
               />
             </FormControl>
           </Flex>
-          <Flex justifyContent={"space-between"}>
-            <FormControl mt="10px" w="45%" id="odometer">
+          <Flex
+            flexDir={{ base: "column", sm: "row" }}
+            justifyContent={"space-between"}
+          >
+            <FormControl
+              mt="10px"
+              w={{ base: "100%", sm: "45%" }}
+              id="odometer"
+            >
               <FormLabel>Odometer</FormLabel>
               <Input
                 type="number"
@@ -418,7 +521,11 @@ const AddCar = () => {
                 name="odometer"
               />
             </FormControl>
-            <FormControl mt="10px" w="45%" id="reported_accident">
+            <FormControl
+              mt="10px"
+              w={{ base: "100%", sm: "45%" }}
+              id="reported_accident"
+            >
               <FormLabel>Reported Accident</FormLabel>
               <Input
                 onChange={change}
@@ -428,8 +535,15 @@ const AddCar = () => {
               />
             </FormControl>
           </Flex>
-          <Flex justifyContent={"space-between"}>
-            <FormControl mt="10px" w="45%" id="scratches">
+          <Flex
+            flexDir={{ base: "column", sm: "row" }}
+            justifyContent={"space-between"}
+          >
+            <FormControl
+              mt="10px"
+              w={{ base: "100%", sm: "45%" }}
+              id="scratches"
+            >
               <FormLabel>Scratches</FormLabel>
               <Input
                 onChange={change}
